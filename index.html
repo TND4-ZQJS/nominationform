@@ -146,9 +146,9 @@
 
   <section class="section" id="sectionA">
     <h2>Section B — Nominee Entries</h2>
-    <div id="policiesContainer" class="policy-grid"></div>
+    <div id="nomineesContainer" class="policy-grid"></div>
     <div class="row">
-      <button id="addPolicy">+ Add Another Nominee</button>
+      <button id="addNominee">+ Add Another Nominee</button>
       <small class="muted">Up to 5 Nominees</small>
     </div>
   </section>
@@ -423,8 +423,8 @@
 <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 <script>
 /* ---------- CONFIG ---------- */
-const PDF_FILENAME = "Credit Card Enrolment Form_LF4092_200524_fillable.pdf";
-const MAX_POLICIES = 4;
+const PDF_FILENAME = "Nomination and Trustees_LF4056_LF4054_fillable.pdf";
+const MAX_NOMINEES = 5;
 
 /* ---------- helpers ---------- */
 function $(id){return document.getElementById(id);}
@@ -514,109 +514,186 @@ function restoreOneTimeState(){
 }
 
 /* ---------- SECTION A: Dynamic policies ---------- */
-const policiesContainer = $("policiesContainer");
-const addPolicyBtn = $("addPolicy");
-let policyCount = 0;
+const nomineesContainer = $("nomineesContainer");
+const addNomineeBtn = $("addNominee");
+let nomineeCount = 0;
 
 function relationshipOptionsHTML(selected=""){
-  const opts = ["OWNSELF","SPOUSE","CHILDREN","PARENT","GRANDPARENT","SIBLING","COMPANY"];
+  const opts = ["SPOUSE","SON","DAUGHTER","PARENT","GRANDPARENT","SIBLING","FRIEND"];
   return opts.map(v=> `<option value="${v}" ${v===selected?"selected":""}>${v}</option>`).join("");
 }
-function createPolicyEntry(index){
+
+function dayOptionsHTML(selected=""){
+  return Array.from({length:31}, (_,i)=> {
+    const v = String(i+1).padStart(2,"0");
+    return `<option value="${v}" ${v===selected?"selected":""}>${v}</option>`;
+  }).join("");
+}
+function monthOptionsHTML(selected=""){
+  return Array.from({length:12}, (_,i)=> {
+    const v = String(i+1).padStart(2,"0");
+    return `<option value="${v}" ${v===selected?"selected":""}>${v}</option>`;
+  }).join("");
+}
+  
+// ---- CREATE ENTRY ----
+function createNomineeEntry(index){
   const wrap = document.createElement("div");
-  wrap.className = "policy";
+  wrap.className = "nominee";
   wrap.dataset.index = index;
   wrap.innerHTML = `
-    <h3><span>Policy Entry ${index}</span> <button type="button" class="remove-btn" aria-label="Remove policy">Remove</button></h3>
-    <label>Policy No.
-      <input type="text" id="PolicyNo${index}" placeholder="Enter policy number">
+    <h3><span>Nominee Entry ${index}</span>
+      <button type="button" class="remove-btn">Remove</button>
+    </h3>
+    <label>Nominee Name
+      <input type="text" id="Nom_Nominee${index}_Name">
     </label>
-    <label>Name of Insured
-      <input type="text" id="Insured${index}" placeholder="Enter name of Insured">
+    <label>Date of Birth (Day)
+      <select id="Nom_Nominee${index}_DD"><option value="">DD</option>${dayOptionsHTML()}</select>
     </label>
-    <label>Relationship of Cardholder with Owner
-      <select id="Relationship${index}">
-        <option value="">-- CHOOSE --</option>
-        ${relationshipOptionsHTML()}
-      </select>
+    <label>Date of Birth (Month)
+      <select id="Nom_Nominee${index}_MM"><option value="">MM</option>${monthOptionsHTML()}</select>
     </label>
-  `;
-  const insured = wrap.querySelector("#Insured"+index);
-  insured.addEventListener("input", ()=>{ insured.value = insured.value.toUpperCase(); saveElValue(insured); });
-  ["PolicyNo"+index, "Relationship"+index].forEach(id=>{
-    const el = wrap.querySelector("#"+id); if(el) autoBindSave(el);
-  });
-  const sp = localStorage.getItem("PolicyNo"+index); if(sp!==null) wrap.querySelector("#PolicyNo"+index).value = sp;
-  const si = localStorage.getItem("Insured"+index); if(si!==null) insured.value = si.toUpperCase();
-  const sr = localStorage.getItem("Relationship"+index); if(sr!==null) wrap.querySelector("#Relationship"+index).value = sr;
+    <label>Birthday (Year)
+      <input type="text" id="Nom_Nominee${index}_YYYY" placeholder="YYYY" maxlength="4">
+    </label>
+    <label>NRIC/Passport No.
+      <input type="text" id="Nom_Nominee${index}_NRICPassport">
+    </label>
+    <label>Email
+      <input type="text" id="Nom_Nominee${index}_Email">
+    </label>
+    <label>Mobile No.
+      <input type="text" id="Nom_Nominee${index}_Mobile">
+    </label>
+    <label>Nationality
+      <input type="text" id="Nom_Nominee${index}_Nationality">
+    </label>
+    <label>Relationship to Proposed Life Insured/Insured
+      <select id="Nom_Nominee${index}_Relationship"><option value="">-- CHOOSE --</option>${relationshipOptionsHTML()}</select>
+    </label>
+    <label>Percentage of Share (%)
+      <input type="number" id="Nom_Nominee${index}_Share">
+    </label>
 
-  wrap.querySelector(".remove-btn").addEventListener("click", ()=>{
-    policiesContainer.removeChild(wrap);
-    policyCount = Math.max(0, policyCount - 1);
-    addPolicyBtn.disabled = policyCount >= MAX_POLICIES;
-    renumberPolicies(); showSaveStatus();
+    <!-- UI CONDITION 1: Correspondence Address -->
+    <label>
+      <input type="checkbox" id="Nom_Nominee${index}_HasCorres"> Correspondence Address (if different from Proposed Life Insured/Insured)
+    </label>
+    <div class="corres-section" id="Nom_Nominee${index}_CorresWrap" style="display:none">
+      <label>Correspondence Address Line 1
+        <input type="text" id="Nom_Nominee${index}_CorresAdd_Line1">
+      </label>
+      <label>Correspondence Address Line 2
+        <input type="text" id="Nom_Nominee${index}_CorresAdd_Line2">
+      </label>
+      <label>Postcode
+        <input type="text" id="Nom_Nominee${index}_CorresAdd_Postcode">
+      </label>
+      <label>Country
+        <input type="text" id="Nom_Nominee${index}_CorresAdd_Country">
+      </label>
+
+      <!-- UI CONDITION 2: Residential Address -->
+      <label>
+        <input type="checkbox" id="Nom_Nominee${index}_HasRes"> Residential Address (if different from Correspondence Address)
+      </label>
+      <div class="res-section" id="Nom_Nominee${index}_ResWrap" style="display:none">
+        <label>Residential Address Line 1
+          <input type="text" id="Nom_Nominee${index}_ResAdd_Line1">
+        </label>
+        <label>Residential Address Line 2
+          <input type="text" id="Nom_Nominee${index}_ResAdd_Line2">
+        </label>
+        <label>Postcode
+          <input type="text" id="Nom_Nominee${index}_ResAdd_Postcode">
+        </label>
+        <label>Country
+          <input type="text" id="Nom_Nominee${index}_ResAdd_Country">
+        </label>
+      </div>
+    </div>
+  `;
+
+  // Auto uppercase for all text inputs
+  wrap.querySelectorAll("input[type=text]").forEach(el=>{
+    el.addEventListener("input", ()=>{ el.value = el.value.toUpperCase(); saveElValue(el); });
   });
+
+  // Bind all inputs/selects to save
+  wrap.querySelectorAll("input, select").forEach(el=>{
+    autoBindSave(el);
+    const saved = localStorage.getItem(el.id);
+    if(saved!==null){
+      if(el.type==="checkbox") el.checked = saved==="true";
+      else el.value = saved;
+    }
+  });
+
+  // UI condition toggle
+  const hasCorres = wrap.querySelector("#Nom_Nominee"+index+"_HasCorres");
+  const corresWrap = wrap.querySelector("#Nom_Nominee"+index+"_CorresWrap");
+  const hasRes = wrap.querySelector("#Nom_Nominee"+index+"_HasRes");
+  const resWrap = wrap.querySelector("#Nom_Nominee"+index+"_ResWrap");
+
+  function updateVisibility(){
+    corresWrap.style.display = hasCorres.checked ? "block" : "none";
+    resWrap.style.display = (hasCorres.checked && hasRes.checked) ? "block" : "none";
+    saveElValue(hasCorres);
+    saveElValue(hasRes);
+  }
+  hasCorres.addEventListener("change", updateVisibility);
+  hasRes.addEventListener("change", updateVisibility);
+
+  // Restore visibility from saved state
+  updateVisibility();
+
+  // Remove button
+  wrap.querySelector(".remove-btn").addEventListener("click", ()=>{
+    nomineesContainer.removeChild(wrap);
+    nomineeCount = Math.max(0, nomineeCount - 1);
+    addNomineeBtn.disabled = nomineeCount >= MAX_NOMINEES;
+    renumberNominees();
+    showSaveStatus();
+  });
+
   return wrap;
 }
-function addPolicy(){
-  if(policyCount >= MAX_POLICIES) return;
-  policyCount++;
-  const node = createPolicyEntry(policyCount);
-  policiesContainer.appendChild(node);
-  addPolicyBtn.disabled = policyCount >= MAX_POLICIES;
-  localStorage.setItem("policyCount", policyCount);
+
+// ---- ADD ----
+function addNominee(){
+  if(nomineeCount >= MAX_NOMINEES) return;
+  nomineeCount++;
+  const node = createNomineeEntry(nomineeCount);
+  nomineesContainer.appendChild(node);
+  addNomineeBtn.disabled = nomineeCount >= MAX_NOMINEES;
+  localStorage.setItem("nomineeCount", nomineeCount);
   showSaveStatus();
 }
-function renumberPolicies(){
-  const cards = Array.from(policiesContainer.querySelectorAll(".policy"));
-  const snapshot = cards.map((card)=> {
-    const idx = card.dataset.index;
-    return {
-      el: card,
-      PolicyNo: card.querySelector(`#PolicyNo${idx}`)?.value || "",
-      Insured: card.querySelector(`#Insured${idx}`)?.value || "",
-      Relationship: card.querySelector(`#Relationship${idx}`)?.value || ""
-    };
-  });
-  snapshot.forEach((_, i)=>{
-    const old = (cards[i].dataset.index);
-    ["PolicyNo","Insured","Relationship"].forEach(k => localStorage.removeItem(k+old));
-  });
-  snapshot.forEach((data, i)=>{
-    const newIndex = i+1;
-    const card = data.el;
-    card.dataset.index = newIndex;
-    const titleSpan = card.querySelector("h3 span");
-    if(titleSpan) titleSpan.textContent = "Policy Entry " + newIndex;
 
-    const pn = card.querySelector(`[id^="PolicyNo"]`);
-    const iname = card.querySelector(`[id^="Insured"]`);
-    const rel = card.querySelector(`[id^="Relationship"]`);
-    pn.id = "PolicyNo"+newIndex; pn.setAttribute("placeholder","PolicyNo"+newIndex);
-    iname.id = "Insured"+newIndex; iname.setAttribute("placeholder","Insured"+newIndex);
-    rel.id = "Relationship"+newIndex;
-
-    iname.removeEventListener("input", iname._upperListener || (()=>{}));
-    const upperListener = ()=>{ iname.value = iname.value.toUpperCase(); saveElValue(iname); };
-    iname.addEventListener("input", upperListener); iname._upperListener = upperListener;
-
-    [pn, rel].forEach(el=>{ el.replaceWith(el.cloneNode(true)); });
-    const pn2 = card.querySelector("#PolicyNo"+newIndex);
-    const rel2 = card.querySelector("#Relationship"+newIndex);
-
-    pn2.value = data.PolicyNo || "";
-    iname.value = (data.Insured || "").toUpperCase();
-    rel2.value = data.Relationship || "";
-
-    autoBindSave(pn2); autoBindSave(iname); autoBindSave(rel2);
-    localStorage.setItem("PolicyNo"+newIndex, pn2.value);
-    localStorage.setItem("Insured"+newIndex, iname.value);
-    localStorage.setItem("Relationship"+newIndex, rel2.value);
-  });
-  policyCount = snapshot.length;
-  localStorage.setItem("policyCount", policyCount);
+// ---- RENUMBER ----
+function renumberNominees(){
+  const cards = Array.from(nomineesContainer.querySelectorAll(".nominee"));
+  nomineeCount = cards.length;
+  localStorage.setItem("nomineeCount", nomineeCount);
 }
-addPolicyBtn.addEventListener("click", addPolicy);
+
+// ---- INIT ----
+addNomineeBtn.addEventListener("click", addNominee);
+
+// Utils
+function autoBindSave(el){ el.addEventListener("input", ()=> saveElValue(el)); }
+function saveElValue(el){ 
+  if(el.type==="checkbox") localStorage.setItem(el.id, el.checked);
+  else localStorage.setItem(el.id, el.value);
+}
+function showSaveStatus(){ console.log("saved"); }
+
+// Restore saved nominees
+for(let i=1;i<=nomineeCount;i++){
+  nomineesContainer.appendChild(createNomineeEntry(i));
+}
+addNomineeBtn.disabled = nomineeCount >= MAX_NOMINEES;
 
 /* ---------- CARD details enhancements ---------- */
 $("CardName").addEventListener("input", (e)=>{ e.target.value = e.target.value.toUpperCase(); saveElValue(e.target); });
