@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Nomination Form — Web Filler (LF4056/LF4054)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<!-- CDN libs -->
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+
+<style>
+  :root{--bg:#f6f7f9;--card:#fff;--accent:#007aff;--muted:#666;--line:#e9e9ee}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto; background:var(--bg); color:#111}
+  .wrap{max-width:1200px;margin:18px auto;padding:12px;display:grid;grid-template-columns:1fr 420px;gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+  .card header{padding:12px 16px;border-bottom:1px solid var(--line);font-weight:600}
+  .card .body{padding:12px;overflow:auto}
+  .toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+  .btn{padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:white;cursor:pointer}
+  .btn.primary{background:var(--accent);color:white;border-color:transparent}
+  .btn.warn{background:#f97316;color:white;border-color:transparent}
+  .row{display:grid;grid-template-columns:repeat(12,1fr);gap:10px;margin-bottom:8px}
+  .col-12{grid-column:span 12}
+  .col-6{grid-column:span 6}
+  .col-4{grid-column:span 4}
+  .col-3{grid-column:span 3}
+  label{display:block;font-size:13px;color:#333;margin-bottom:4px}
+  input[type="text"], input[type="email"], input[type="tel"], select, textarea{
+    width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:white;font-size:14px
+  }
+  .section{border:1px dashed var(--line);padding:12px;border-radius:10px;margin-bottom:12px;background:#fff}
+  .muted{font-size:12px;color:var(--muted)}
+  .nominee-list{display:flex;flex-direction:column;gap:10px}
+  .nom-item{border:1px solid var(--line);padding:10px;border-radius:10px;background:#fafafa;position:relative}
+  .nom-item .actions{position:absolute;top:8px;right:8px;display:flex;gap:6px}
+  .small{font-size:12px;color:var(--muted)}
+  .flex{display:flex;gap:8px;align-items:center}
+  .check-inline{display:flex;gap:8px;align-items:center}
+  .signature-preview{height:64px;border:1px solid var(--line);border-radius:8px;padding:4px;background:white;display:flex;align-items:center;justify-content:center}
+  .signature-preview img{max-height:56px;max-width:100%}
+  .footer{padding:10px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end}
+  .pdf-preview{height:calc(100vh - 60px);overflow:auto;padding:8px}
+  /* modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:1000}
+  .modal{background:white;border-radius:12px;padding:12px;max-width:760px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.25)}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:1000px){ .wrap{grid-template-columns:1fr} .pdf-preview{height:360px} }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <!-- LEFT: Form -->
+  <div class="card" id="leftCard">
+    <header>Nomination Form — Web Filler</header>
+    <div class="body">
+      <div class="toolbar">
+        <button class="btn primary" id="btnPreview">Preview & Generate</button>
+        <button class="btn" id="btnDownload" disabled>Download Flattened PDF</button>
+        <button class="btn" id="btnReset">Reset</button>
+        <div style="flex:1"></div>
+        <div class="muted small">Autosave: <span id="autosaveState">Idle</span></div>
+      </div>
+
+      <!-- Section 1A - Policy Information -->
+      <div class="section" id="sectionPolicy">
+        <h3>Section 1A — Policy Information</h3>
+
+        <div class="row">
+          <div class="col-6">
+            <label>Policy Number
+              <input type="text" id="Nom_PolicyNumber" />
+            </label>
+          </div>
+          <div class="col-6">
+            <label>Proposed Life Insured / Insured
+              <input type="text" id="Nom_InsuredName" />
+            </label>
+          </div>
+
+          <div class="col-6">
+            <label>Marital Status
+              <div class="check-inline">
+                <label><input type="radio" name="Nom_MaritalStatus" id="Nom_MaritalStatus_Single" value="Single"> Single</label>
+                <label><input type="radio" name="Nom_MaritalStatus" id="Nom_MaritalStatus_Married" value="Married"> Married</label>
+                <label><input type="radio" name="Nom_MaritalStatus" id="Nom_MaritalStatus_Widowed" value="Widowed"> Widowed</label>
+                <label><input type="radio" name="Nom_MaritalStatus" id="Nom_MaritalStatus_Divorced" value="Divorced"> Divorced</label>
+              </div>
+            </label>
+          </div>
+
+          <div class="col-6">
+            <label>Religion
+              <div class="check-inline">
+                <label><input type="radio" name="Nom_Religion" id="Nom_Religion_Muslim" value="Muslim"> Muslim</label>
+                <label><input type="radio" name="Nom_Religion" id="Nom_Religion_NonMuslim" value="Non-Muslim"> Non-Muslim</label>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Nominees -->
+      <div class="section" id="sectionNominees">
+        <h3>Nominee Details (Max 5)</h3>
+        <div class="muted small">Add nominees (max 5). For each nominee, you can optionally provide different correspondence & residential addresses.</div>
+        <div style="height:12px"></div>
+        <div class="nominee-list" id="nomineeList"></div>
+
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn" id="btnAddNominee">Add Nominee</button>
+          <div class="small muted">Current: <span id="nomCount">0</span> / 5</div>
+        </div>
+      </div>
+
+      <!-- Section: Signature Details -->
+      <div class="section" id="sectionSign">
+        <h3>Signature Details</h3>
+
+        <div class="row">
+          <div class="col-4">
+            <label>Signed at (State)
+              <select id="Nom_Nominee_SignState">
+                <option value="">Select state...</option>
+                <option>Johor</option><option>Kedah</option><option>Kelantan</option><option>Malacca</option>
+                <option>Negeri Sembilan</option><option>Pahang</option><option>Perak</option><option>Perlis</option>
+                <option>Penang</option><option>Sabah</option><option>Sarawak</option><option>Selangor</option>
+                <option>Terengganu</option><option>Kuala Lumpur</option><option>Putrajaya</option><option>Labuan</option>
+              </select>
+            </label>
+          </div>
+          <div class="col-4">
+            <label>Day
+              <select id="Nom_Nominee_Day"></select>
+            </label>
+          </div>
+          <div class="col-4">
+            <label>Year
+              <select id="Nom_Nominee_Year"></select>
+            </label>
+          </div>
+        </div>
+
+        <div style="height:8px"></div>
+
+        <!-- Signatures: Policy Owner -->
+        <div style="border:1px solid var(--line);padding:10px;border-radius:8px;margin-bottom:8px">
+          <div style="display:flex;gap:8px;align-items:center">
+            <strong>Policy Owner</strong>
+            <div style="flex:1"></div>
+            <button class="btn" data-role="policy" id="btnSignPolicy">Sign / Edit</button>
+          </div>
+          <div style="margin-top:8px">
+            <div class="row">
+              <div class="col-4"><label>Name<input type="text" id="Nom_Nominee_PolicyOwner_Name"></label></div>
+              <div class="col-4"><label>NRIC / Passport<input type="text" id="Nom_Nominee_PolicyOwner_NRIC"></label></div>
+              <div class="col-4"><label>Signature Preview<div class="signature-preview" id="preview_policy">No signature</div></label></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Signatures: Trustee -->
+        <div style="border:1px solid var(--line);padding:10px;border-radius:8px;margin-bottom:8px">
+          <div style="display:flex;gap:8px;align-items:center">
+            <strong>Trustee</strong>
+            <div style="flex:1"></div>
+            <button class="btn" data-role="trustee" id="btnSignTrustee">Sign / Edit</button>
+          </div>
+          <div style="margin-top:8px">
+            <div class="row">
+              <div class="col-4"><label>Name<input type="text" id="Nom_Nominee_Trustee_Name"></label></div>
+              <div class="col-4"><label>NRIC / Passport<input type="text" id="Nom_Nominee_Trustee_NIRC"></label></div>
+              <div class="col-4"><label>Signature Preview<div class="signature-preview" id="preview_trustee">No signature</div></label></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Signatures: Witness -->
+        <div style="border:1px solid var(--line);padding:10px;border-radius:8px;">
+          <div style="display:flex;gap:8px;align-items:center">
+            <strong>Witness</strong>
+            <div style="flex:1"></div>
+            <button class="btn" data-role="witness" id="btnSignWitness">Sign / Edit</button>
+          </div>
+          <div style="margin-top:8px">
+            <div class="row">
+              <div class="col-3"><label>Name<input type="text" id="Nom_Nominee_Witness_Name"></label></div>
+              <div class="col-3"><label>NRIC / Passport<input type="text" id="Nom_Nominee_Witness_NIRC"></label></div>
+              <div class="col-3"><label>Mobile<input type="tel" id="Nom_Nominee_Witness_Mobile"></label></div>
+              <div class="col-3"><label>Signature Preview<div class="signature-preview" id="preview_witness">No signature</div></label></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="footer">
+        <button class="btn" id="btnSaveLocal">Save Now</button>
+        <button class="btn warn" id="btnClearLocal">Clear Saved</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: PDF preview -->
+  <div class="card" id="rightCard">
+    <header>Generated PDF Preview</header>
+    <div class="body pdf-preview" id="pdfPreviewArea">
+      <div class="muted small">Click <strong>Preview & Generate</strong> to build a PDF from the form data. The generated PDF will be displayed here and can be downloaded flattened.</div>
+      <div id="pdfCanvasContainer"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Signature Modal -->
+<div id="sigModal" style="display:none">
+  <div class="modal-backdrop" id="sigModalBackdrop">
+    <div class="modal">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+        <h3 id="sigModalTitle" style="margin:0">Sign</h3>
+        <div style="flex:1"></div>
+        <button class="btn" id="closeSigModal">Close</button>
+      </div>
+      <div class="grid-2">
+        <div>
+          <label>Signer Name<input type="text" id="sig_name" /></label>
+          <label style="margin-top:8px">Signer ID (NRIC/Passport)<input type="text" id="sig_id" /></label>
+          <div style="margin-top:8px" class="small muted">Preview below. Click Save to store signature.</div>
+        </div>
+        <div>
+          <div style="border:1px solid var(--line);border-radius:8px;padding:6px;background:white">
+            <canvas id="sigCanvas" style="width:100%;height:200px;border-radius:6px"></canvas>
+            <div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end">
+              <button class="btn" id="sigClear">Clear</button>
+              <button class="btn primary" id="sigSave">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/*
+  Nomination Form Web Filler
+  - Dynamic nominees (max 5)
+  - Autosave to localStorage
+  - Signature modal (policy/trustee/witness)
+  - Generate PDF using pdf-lib (text & signatures drawn at coordinates)
+  - IDs map to PDF field names you specified.
+  - Adjustable placement constants are below.
+*/
+
+/* ---------- Placement constants (tweak these to align on your real template) ---------- */
+const PAGE_WIDTH = 595;   // A4 width in PDF points (approx)
+const PAGE_HEIGHT = 842;  // A4 height
+// Top margins for each "printed area" where we place content (per page)
+const PAGE1_Y = 780; // Y position baseline for first section (higher = closer to top)
+const LINE_HEIGHT = 14;
+
+// Signature image placement and scale (tweak to match your real template)
+const SIG_PLACEMENTS = {
+  policy: { page: 2, x: 120, y: 150, width: 180, height: 60, scale: 1.0 },
+  trustee: { page: 2, x: 120, y: 80, width: 180, height: 60, scale: 1.0 },
+  witness: { page: 2, x: 420, y: 80, width: 180, height: 60, scale: 1.0 },
+};
+
+/* ---------- Helper utilities ---------- */
+function $(id){ return document.getElementById(id) }
+function q(selector){ return document.querySelector(selector) }
+
+const STORAGE_KEY = 'nomination_form_v1';
+
+/* ---------- Form state & autosave ---------- */
+let state = {
+  policyNumber: '',
+  insuredName: '',
+  maritalStatus: '',
+  religion: '',
+  signState: '',
+  signDay: '',
+  signYear: '',
+  nominees: [], // array of nominee objects
+  signatures: {
+    policy: null,    // {dataUrl, name, id}
+    trustee: null,
+    witness: null
+  },
+  owners: { policyName: '', policyID: '', trusteeName:'', trusteeID:'', witnessName:'', witnessID:'', witnessMobile:'' }
+};
+
+// Initialize day/year selects
+(function initSelects(){
+  const day = $('Nom_Nominee_Day');
+  for(let i=1;i<=31;i++){ const opt=new Option(i,i); day.add(opt) }
+  const year = $('Nom_Nominee_Year');
+  for(let y=2025;y<=2030;y++){ year.add(new Option(y,y)) }
+})();
+
+/* ---------- DOM wiring ---------- */
+const nomineeListEl = $('nomineeList');
+const nomCountEl = $('nomCount');
+const autosaveStateEl = $('autosaveState');
+
+$('btnAddNominee').addEventListener('click', addNominee);
+$('btnPreview').addEventListener('click', generateAndPreviewPDF);
+$('btnDownload').addEventListener('click', downloadPDF);
+$('btnReset').addEventListener('click', resetForm);
+$('btnSaveLocal').addEventListener('click', saveStateToLocal);
+$('btnClearLocal').addEventListener('click', ()=>{ localStorage.removeItem(STORAGE_KEY); location.reload() });
+
+['Nom_PolicyNumber','Nom_InsuredName','Nom_Nominee_SignState','Nom_Nominee_Day','Nom_Nominee_Year',
+ 'Nom_Nominee_PolicyOwner_Name','Nom_Nominee_PolicyOwner_NRIC','Nom_Nominee_Trustee_Name','Nom_Nominee_Trustee_NIRC',
+ 'Nom_Nominee_Witness_Name','Nom_Nominee_Witness_NIRC','Nom_Nominee_Witness_Mobile'
+].forEach(id=>{
+  const el = $(id);
+  if(el){ el.addEventListener('input', onFormChange) }
+});
+
+// radio inputs
+['Nom_MaritalStatus_Single','Nom_MaritalStatus_Married','Nom_MaritalStatus_Widowed','Nom_MaritalStatus_Divorced',
+ 'Nom_Religion_Muslim','Nom_Religion_NonMuslim'
+].forEach(id=>{
+  const el = $(id); if(el) el.addEventListener('change', onFormChange);
+});
+
+// Signature buttons
+$('btnSignPolicy').addEventListener('click', ()=> openSignatureModal('policy'));
+$('btnSignTrustee').addEventListener('click', ()=> openSignatureModal('trustee'));
+$('btnSignWitness').addEventListener('click', ()=> openSignatureModal('witness'));
+
+/* ---------- Nominee management ---------- */
+function createEmptyNominee(){
+  return {
+    Name: '',
+    DD:'', MM:'', YYYY:'',
+    NRICPassport:'', Email:'', Mobile:'', Nationality:'', Relationship:'', Share:'',
+    CorresDifferent: false,
+    CorresAdd_Line1:'', CorresAdd_Line2:'', CorresAdd_Postcode:'', CorresAdd_Country:'',
+    ResDifferent:false,
+    ResAdd_Line1:'', ResAdd_Line2:'', ResAdd_Postcode:'', ResAdd_Country:''
+  }
+}
+
+function renderNominees(){
+  nomineeListEl.innerHTML = '';
+  state.nominees.forEach((n, idx)=>{
+    const div = document.createElement('div'); div.className='nom-item'; div.dataset.index=idx;
+    div.innerHTML = `
+      <div class="actions">
+        <button class="btn" data-action="remove">Remove</button>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <strong>Nominee ${idx+1}</strong>
+      </div>
+      <div class="row">
+        <div class="col-4"><label>Name<input type="text" data-key="Name" value="${escapeHtml(n.Name)}"></label></div>
+        <div class="col-2"><label>DD<input type="text" data-key="DD" value="${escapeHtml(n.DD)}"></label></div>
+        <div class="col-2"><label>MM<input type="text" data-key="MM" value="${escapeHtml(n.MM)}"></label></div>
+        <div class="col-3"><label>YYYY<input type="text" data-key="YYYY" value="${escapeHtml(n.YYYY)}"></label></div>
+        <div class="col-12" style="height:6px"></div>
+        <div class="col-4"><label>NIRC / Passport<input type="text" data-key="NRICPassport" value="${escapeHtml(n.NRICPassport)}"></label></div>
+        <div class="col-4"><label>Email<input type="email" data-key="Email" value="${escapeHtml(n.Email)}"></label></div>
+        <div class="col-4"><label>Mobile<input type="tel" data-key="Mobile" value="${escapeHtml(n.Mobile)}"></label></div>
+        <div class="col-4"><label>Nationality<input type="text" data-key="Nationality" value="${escapeHtml(n.Nationality)}"></label></div>
+        <div class="col-4"><label>Relationship<input type="text" data-key="Relationship" value="${escapeHtml(n.Relationship)}"></label></div>
+        <div class="col-4"><label>Share (%)<input type="text" data-key="Share" value="${escapeHtml(n.Share)}"></label></div>
+
+        <div class="col-12" style="height:8px"></div>
+        <div class="col-12">
+          <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" data-key="CorresDifferent" ${n.CorresDifferent ? 'checked':''} /> Correspondence address different from insured</label>
+        </div>
+        <div class="col-12 corresFields" style="${n.CorresDifferent ? 'display:block':''}">
+          <div class="row">
+            <div class="col-6"><label>Correspondence Line 1<input type="text" data-key="CorresAdd_Line1" value="${escapeHtml(n.CorresAdd_Line1)}"></label></div>
+            <div class="col-6"><label>Correspondence Line 2<input type="text" data-key="CorresAdd_Line2" value="${escapeHtml(n.CorresAdd_Line2)}"></label></div>
+            <div class="col-6"><label>Postcode<input type="text" data-key="CorresAdd_Postcode" value="${escapeHtml(n.CorresAdd_Postcode)}"></label></div>
+            <div class="col-6"><label>Country<input type="text" data-key="CorresAdd_Country" value="${escapeHtml(n.CorresAdd_Country)}"></label></div>
+          </div>
+        </div>
+
+        <div class="col-12" style="height:6px"></div>
+        <div class="col-12">
+          <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" data-key="ResDifferent" ${n.ResDifferent ? 'checked':''} /> Residential address different from correspondence</label>
+        </div>
+        <div class="col-12 resFields" style="${n.ResDifferent ? 'display:block':''}">
+          <div class="row">
+            <div class="col-6"><label>Residential Line 1<input type="text" data-key="ResAdd_Line1" value="${escapeHtml(n.ResAdd_Line1)}"></label></div>
+            <div class="col-6"><label>Residential Line 2<input type="text" data-key="ResAdd_Line2" value="${escapeHtml(n.ResAdd_Line2)}"></label></div>
+            <div class="col-6"><label>Res Postcode<input type="text" data-key="ResAdd_Postcode" value="${escapeHtml(n.ResAdd_Postcode)}"></label></div>
+            <div class="col-6"><label>Res Country<input type="text" data-key="ResAdd_Country" value="${escapeHtml(n.ResAdd_Country)}"></label></div>
+          </div>
+        </div>
+      </div>
+    `;
+    nomineeListEl.appendChild(div);
+
+    // wire input events
+    div.querySelectorAll('input,textarea,select').forEach(inp=>{
+      inp.addEventListener('input', e=>{
+        const k = inp.dataset.key;
+        if(k){
+          // checkbox handling
+          if(inp.type === 'checkbox'){ state.nominees[idx][k] = inp.checked; }
+          else state.nominees[idx][k] = inp.value;
+          renderNominees(); // to show/hide address sections
+          scheduleAutosave();
+        }
+      })
+    });
+
+    // remove button
+    div.querySelector('[data-action="remove"]').addEventListener('click', ()=>{ removeNominee(idx) });
+  });
+
+  nomCountEl.textContent = state.nominees.length;
+}
+
+function addNominee(){
+  if(state.nominees.length >= 5){ alert('Max 5 nominees'); return; }
+  state.nominees.push(createEmptyNominee());
+  renderNominees();
+  scheduleAutosave();
+}
+
+function removeNominee(index){
+  state.nominees.splice(index,1);
+  renderNominees();
+  scheduleAutosave();
+}
+
+/* ---------- Input change handling ---------- */
+function onFormChange(){
+  // map DOM to state
+  state.policyNumber = $('Nom_PolicyNumber').value;
+  state.insuredName = $('Nom_InsuredName').value;
+  ['Nom_MaritalStatus_Single','Nom_MaritalStatus_Married','Nom_MaritalStatus_Widowed','Nom_MaritalStatus_Divorced'].forEach(id=>{
+    if($(id).checked) state.maritalStatus = $(id).value;
+  });
+  ['Nom_Religion_Muslim','Nom_Religion_NonMuslim'].forEach(id=>{ if($(id).checked) state.religion = $(id).value });
+  state.signState = $('Nom_Nominee_SignState').value;
+  state.signDay = $('Nom_Nominee_Day').value;
+  state.signYear = $('Nom_Nominee_Year').value;
+
+  state.owners.policyName = $('Nom_Nominee_PolicyOwner_Name').value;
+  state.owners.policyID = $('Nom_Nominee_PolicyOwner_NRIC').value;
+  state.owners.trusteeName = $('Nom_Nominee_Trustee_Name').value;
+  state.owners.trusteeID = $('Nom_Nominee_Trustee_NIRC').value;
+  state.owners.witnessName = $('Nom_Nominee_Witness_Name').value;
+  state.owners.witnessID = $('Nom_Nominee_Witness_NIRC').value;
+  state.owners.witnessMobile = $('Nom_Nominee_Witness_Mobile').value;
+
+  scheduleAutosave();
+}
+
+/* ---------- Autosave (throttle) ---------- */
+let autosaveTimer = null;
+function scheduleAutosave(){
+  autosaveStateEl.textContent = 'Pending...';
+  if(autosaveTimer) clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(()=>{ saveStateToLocal(); autosaveStateEl.textContent='Saved' }, 700);
+}
+
+function saveStateToLocal(){
+  // assemble state from DOM as final
+  onFormChange();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  autosaveStateEl.textContent = 'Saved';
+}
+
+/* ---------- load saved state on start ---------- */
+function loadStateFromLocal(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw) return;
+  try {
+    const obj = JSON.parse(raw);
+    // shallow assign
+    state = Object.assign(state, obj);
+    // render to DOM
+    $('Nom_PolicyNumber').value = state.policyNumber || '';
+    $('Nom_InsuredName').value = state.insuredName || '';
+    ['Nom_MaritalStatus_Single','Nom_MaritalStatus_Married','Nom_MaritalStatus_Widowed','Nom_MaritalStatus_Divorced'].forEach(id=>{
+      if(state.maritalStatus && $(id).value === state.maritalStatus) $(id).checked = true; else $(id).checked = false;
+    });
+    ['Nom_Religion_Muslim','Nom_Religion_NonMuslim'].forEach(id=>{
+      if(state.religion && $(id).value === state.religion) $(id).checked = true; else $(id).checked = false;
+    });
+    $('Nom_Nominee_SignState').value = state.signState || '';
+    $('Nom_Nominee_Day').value = state.signDay || '';
+    $('Nom_Nominee_Year').value = state.signYear || '';
+
+    $('Nom_Nominee_PolicyOwner_Name').value = state.owners.policyName || '';
+    $('Nom_Nominee_PolicyOwner_NRIC').value = state.owners.policyID || '';
+    $('Nom_Nominee_Trustee_Name').value = state.owners.trusteeName || '';
+    $('Nom_Nominee_Trustee_NIRC').value = state.owners.trusteeID || '';
+    $('Nom_Nominee_Witness_Name').value = state.owners.witnessName || '';
+    $('Nom_Nominee_Witness_NIRC').value = state.owners.witnessID || '';
+    $('Nom_Nominee_Witness_Mobile').value = state.owners.witnessMobile || '';
+
+    // nominees
+    if(Array.isArray(state.nominees) && state.nominees.length){
+      // ensure at most 5
+      state.nominees = state.nominees.slice(0,5);
+    } else state.nominees = [];
+
+    renderNominees();
+
+    // signatures preview
+    ['policy','trustee','witness'].forEach(role=>{
+      if(state.signatures && state.signatures[role] && state.signatures[role].dataUrl){
+        updateSignaturePreview(role, state.signatures[role].dataUrl);
+      }
+    });
+
+    autosaveStateEl.textContent = 'Loaded';
+  } catch(e){
+    console.error('Failed parse saved', e);
+  }
+}
+
+/* ---------- Reset ---------- */
+function resetForm(){
+  if(!confirm('Reset form and clear saved data?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+
+/* ---------- Signature modal & logic ---------- */
+let currentSignRole = null;
+let signaturePad = null;
+
+function openSignatureModal(role){
+  currentSignRole = role;
+  const modal = $('sigModal');
+  $('sigModalTitle').textContent = 'Sign — ' + role.charAt(0).toUpperCase() + role.slice(1);
+  // prefill name/id for convenience
+  if(role === 'policy'){ $('sig_name').value = $('Nom_Nominee_PolicyOwner_Name').value || ''; $('sig_id').value = $('Nom_Nominee_PolicyOwner_NRIC').value || '' }
+  if(role === 'trustee'){ $('sig_name').value = $('Nom_Nominee_Trustee_Name').value || ''; $('sig_id').value = $('Nom_Nominee_Trustee_NIRC').value || '' }
+  if(role === 'witness'){ $('sig_name').value = $('Nom_Nominee_Witness_Name').value || ''; $('sig_id').value = $('Nom_Nominee_Witness_NIRC').value || '' }
+
+  // show modal
+  document.getElementById('sigModal').style.display = 'block';
+  // init canvas
+  const canvas = document.getElementById('sigCanvas');
+  canvas.width = canvas.clientWidth * 2;
+  canvas.height = 200 * 2;
+  canvas.style.height = '200px';
+  const ctx = canvas.getContext('2d'); ctx.scale(2,2); ctx.fillStyle='#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  signaturePad = new SignaturePad(canvas, { penColor: 'black' });
+  // if existing signature exists in state, load it
+  const existing = state.signatures[role];
+  if(existing && existing.dataUrl){
+    // draw image onto canvas
+    const img = new Image();
+    img.onload = ()=> {
+      ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(img,0,0,canvas.width/2,canvas.height/2);
+      signaturePad.clear(); // to update internal state
+    };
+    img.src = existing.dataUrl;
+  }
+
+  // wire buttons
+  $('sigClear').onclick = ()=>{ signaturePad.clear(); };
+  $('closeSigModal').onclick = ()=>{ closeSignatureModal(); };
+  $('sigSave').onclick = ()=>{ saveSignatureFromModal(); };
+}
+
+function closeSignatureModal(){
+  try{ signaturePad.off && signaturePad.off(); } catch(e){}
+  document.getElementById('sigModal').style.display = 'none';
+}
+
+function saveSignatureFromModal(){
+  if(!signaturePad) return;
+  if(signaturePad.isEmpty()){ if(!confirm('Signature is empty. Save blank?')) return; }
+  const dataUrl = signaturePad.isEmpty() ? null : signaturePad.toDataURL('image/png');
+  // store
+  state.signatures[currentSignRole] = {
+    dataUrl,
+    name: $('sig_name').value || '',
+    id: $('sig_id').value || ''
+  };
+  // also copy name/id to respective fields
+  if(currentSignRole === 'policy'){ $('Nom_Nominee_PolicyOwner_Name').value = state.signatures.policy.name; $('Nom_Nominee_PolicyOwner_NRIC').value = state.signatures.policy.id }
+  if(currentSignRole === 'trustee'){ $('Nom_Nominee_Trustee_Name').value = state.signatures.trustee.name; $('Nom_Nominee_Trustee_NIRC').value = state.signatures.trustee.id }
+  if(currentSignRole === 'witness'){ $('Nom_Nominee_Witness_Name').value = state.signatures.witness.name; $('Nom_Nominee_Witness_NIRC').value = state.signatures.witness.id }
+
+  updateSignaturePreview(currentSignRole, dataUrl);
+  saveStateToLocal();
+  closeSignatureModal();
+}
+
+function updateSignaturePreview(role, dataUrl){
+  const el = $('preview_' + role);
+  el.innerHTML = '';
+  if(!dataUrl){ el.textContent = 'No signature'; return; }
+  const img = document.createElement('img'); img.src = dataUrl; el.appendChild(img);
+}
+
+/* ---------- PDF generation using pdf-lib ---------- */
+let lastGeneratedPdfBytes = null;
+
+async function generateAndPreviewPDF(){
+  onFormChange(); // ensure state up-to-date
+
+  // Build a PDF from scratch and place the data
+  const { PDFDocument, rgb, StandardFonts } = PDFLib;
+  const pdfDoc = await PDFDocument.create();
+  // We'll create 2 pages: page1 for header + nominees listing, page2 for signature block
+  const page1 = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
+  const page2 = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
+
+  // fonts
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const bold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+  // Helper: draw text with baseline offset
+  function drawText(page, text, x, y, size=10, opts={}){
+    page.drawText(String(text || ''), { x, y, size, font, color: rgb(0,0,0), ...opts });
+  }
+
+  // Page1: Header and policy info
+  drawText(page1, 'NOMINATION / PENAMAAN', 40, PAGE_HEIGHT - 40, 14, { font: bold });
+  drawText(page1, 'Form: LF4054 / LF4056 — Generated by Web Filler', 40, PAGE_HEIGHT - 60, 9);
+
+  // Policy info block
+  drawText(page1, 'Policy Number:', 40, PAGE_HEIGHT - 92, 10, { font: bold }); drawText(page1, state.policyNumber, 140, PAGE_HEIGHT - 92, 10);
+  drawText(page1, 'Proposed Life Insured:', 40, PAGE_HEIGHT - 110, 10, { font: bold }); drawText(page1, state.insuredName, 180, PAGE_HEIGHT - 110, 10);
+  drawText(page1, 'Marital Status:', 40, PAGE_HEIGHT - 128, 10, { font: bold }); drawText(page1, state.maritalStatus, 140, PAGE_HEIGHT - 128, 10);
+  drawText(page1, 'Religion:', 320, PAGE_HEIGHT - 128, 10, { font: bold }); drawText(page1, state.religion, 380, PAGE_HEIGHT - 128, 10);
+
+  // Nominees — we will list up to 5, each block with fields
+  let yStart = PAGE_HEIGHT - 160;
+  state.nominees.forEach((n, idx)=>{
+    const labelX = 40;
+    const valueX = 160;
+    const y = yStart - idx * 86;
+    drawText(page1, `Nominee ${idx+1}`, labelX, y + 60, 11, { font: bold });
+    drawText(page1, 'Name:', labelX, y + 46, 10); drawText(page1, n.Name || '', valueX, y + 46, 10);
+    drawText(page1, 'DOB (DD/MM/YYYY):', labelX, y + 30, 10); drawText(page1, `${n.DD || ''}/${n.MM || ''}/${n.YYYY || ''}`, valueX, y + 30, 10);
+    drawText(page1, 'NIRC/Passport:', labelX, y + 14, 10); drawText(page1, n.NRICPassport || '', valueX, y + 14, 10);
+    drawText(page1, 'Email / Mobile:', 320, y + 46, 10); drawText(page1, `${n.Email || ''} / ${n.Mobile || ''}`, 420, y + 46, 10);
+    drawText(page1, 'Nationality / Relationship:', 320, y + 30, 10); drawText(page1, `${n.Nationality || ''} / ${n.Relationship || ''}`, 470, y + 30, 10);
+    drawText(page1, 'Share %:', 320, y + 14, 10); drawText(page1, n.Share || '', 370, y + 14, 10);
+
+    // optional addresses
+    if(n.CorresDifferent){
+      drawText(page1, 'Correspondence Address:', labelX, y - 2, 9, { font: bold });
+      drawText(page1, (n.CorresAdd_Line1 || '') + ' ' + (n.CorresAdd_Line2 || ''), valueX, y - 2, 9);
+      drawText(page1, (n.CorresAdd_Postcode || '') + ' ' + (n.CorresAdd_Country || ''), valueX, y - 14, 9);
+    }
+    if(n.ResDifferent){
+      drawText(page1, 'Residential Address:', 320, y - 2, 9, { font: bold });
+      drawText(page1, (n.ResAdd_Line1 || '') + ' ' + (n.ResAdd_Line2 || ''), 420, y - 2, 9);
+      drawText(page1, (n.ResAdd_Postcode || '') + ' ' + (n.ResAdd_Country || ''), 420, y - 14, 9);
+    }
+  });
+
+  // Page2: Signatures block (we will draw sign state/day/year and signatures)
+  drawText(page2, 'Signatures', 40, PAGE_HEIGHT - 40, 13, { font: bold });
+  drawText(page2, 'Signed at (State):', 40, PAGE_HEIGHT - 72, 10, { font: bold }); drawText(page2, state.signState || '', 170, PAGE_HEIGHT - 72, 10);
+  drawText(page2, 'Day:', 40, PAGE_HEIGHT - 90, 10); drawText(page2, state.signDay || '', 80, PAGE_HEIGHT - 90, 10);
+  drawText(page2, 'Year:', 110, PAGE_HEIGHT - 90, 10); drawText(page2, state.signYear || '', 150, PAGE_HEIGHT - 90, 10);
+
+  // Place Policy Owner text and signature if available
+  drawText(page2, 'Policy Owner Name:', 40, PAGE_HEIGHT - 120, 10, { font: bold }); drawText(page2, state.owners.policyName || '', 180, PAGE_HEIGHT - 120, 10);
+  drawText(page2, 'NRIC/Passport:', 40, PAGE_HEIGHT - 136, 10); drawText(page2, state.owners.policyID || '', 140, PAGE_HEIGHT - 136, 10);
+
+  // Trustee
+  drawText(page2, 'Trustee Name:', 40, PAGE_HEIGHT - 184, 10, { font: bold }); drawText(page2, state.owners.trusteeName || '', 140, PAGE_HEIGHT - 184, 10);
+  drawText(page2, 'Trustee NRIC/Passport:', 40, PAGE_HEIGHT - 200, 10); drawText(page2, state.owners.trusteeID || '', 200, PAGE_HEIGHT - 200, 10);
+
+  // Witness
+  drawText(page2, 'Witness Name:', 320, PAGE_HEIGHT - 184, 10, { font: bold }); drawText(page2, state.owners.witnessName || '', 420, PAGE_HEIGHT - 184, 10);
+  drawText(page2, 'Witness NRIC/Passport:', 320, PAGE_HEIGHT - 200, 10); drawText(page2, state.owners.witnessID || '', 460, PAGE_HEIGHT - 200, 10);
+  drawText(page2, 'Witness Mobile:', 320, PAGE_HEIGHT - 216, 10); drawText(page2, state.owners.witnessMobile || '', 420, PAGE_HEIGHT - 216, 10);
+
+  // Draw signatures images if present
+  async function drawSignatureImage(role){
+    if(!state.signatures[role] || !state.signatures[role].dataUrl) return;
+    try {
+      // fetch bytes from dataUrl
+      const dataUrl = state.signatures[role].dataUrl;
+      const imgBytes = await (await fetch(dataUrl)).arrayBuffer();
+      const img = await pdfDoc.embedPng(imgBytes);
+      const {width, height} = img.scale(1);
+      const place = SIG_PLACEMENTS[role];
+      if(!place) return;
+      // scale to fit requested width/height
+      const scaleX = place.width / width;
+      const scaleY = place.height / height;
+      const scale = Math.min(scaleX, scaleY) * place.scale;
+      page2.drawImage(img, { x: place.x, y: place.y, width: width * scale, height: height * scale });
+    } catch(e){
+      console.warn('Failed embed signature', e);
+    }
+  }
+
+  await drawSignatureImage('policy');
+  await drawSignatureImage('trustee');
+  await drawSignatureImage('witness');
+
+  // Finalize
+  const pdfBytes = await pdfDoc.save();
+  lastGeneratedPdfBytes = pdfBytes;
+
+  // Render simple preview (as blob URL)
+  const blob = new Blob([pdfBytes], {type:'application/pdf'});
+  const url = URL.createObjectURL(blob);
+  const container = $('pdfCanvasContainer');
+  container.innerHTML = `<iframe src="${url}" style="width:100%;height:78vh;border:0"></iframe>`;
+  $('btnDownload').disabled = false;
+}
+
+function downloadPDF(){
+  if(!lastGeneratedPdfBytes) return alert('No generated PDF. Click Preview & Generate first.');
+  const blob = new Blob([lastGeneratedPdfBytes], {type:'application/pdf'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = `Nomination_Form_${(state.policyNumber||'no_policy')}.pdf`; document.body.appendChild(a); a.click(); a.remove();
+}
+
+/* ---------- utilities ---------- */
+function escapeHtml(s){ return (s+'').replace(/[&<>'"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) }
+loadStateFromLocal();
+
+/* ---------- wire small interactions for dynamic fields ---------- */
+// ensure clicking on add when none exist creates initial
+if(state.nominees.length === 0){
+  // create one basic nominee by default (to mirror many web fillers)
+  // but do not auto-add if user explicitly doesn't want—left commented out
+  // addNominee();
+}
+renderNominees();
+
+/* ---------- initial autosave update every X seconds to indicate presence ---------- */
+setTimeout(()=>{ autosaveStateEl.textContent = 'Idle' }, 800);
+
+/* ---------- populate previews for signatures (if any) ---------- */
+if(state.signatures){
+  ['policy','trustee','witness'].forEach(r=>{
+    if(state.signatures[r] && state.signatures[r].dataUrl) updateSignaturePreview(r, state.signatures[r].dataUrl);
+  });
+}
+
+</script>
+</body>
+</html>
