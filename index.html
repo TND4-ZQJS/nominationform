@@ -353,8 +353,7 @@ function createNomineeEntry(index){
   wrap.dataset.index = index;
   wrap.innerHTML = `
     <h3><span>Nominee Entry ${index}</span>
-      <button type="button" class="remove-btn">Remove</button>
-    </h3>
+    <button type="button" class="remove-btn" aria-label="Remove nominee">Remove</button></h3>
     <label>Nominee Name
       <input type="text" id="Nom_Nominee${index}_Name">
     </label>
