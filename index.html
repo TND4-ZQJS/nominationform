@@ -25,58 +25,12 @@
   button.ghost{background:transparent;border:1px solid var(--line);color:#333}
   .actions{display:flex;gap:12px;align-items:center}
 
-  /* Header tidy alignment */
-  .header-agree{
-    display:flex;align-items:center;gap:10px;
-    padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;
-  }
-  .header-agree input[type=checkbox]{margin:0}
-  .header-agree .title{font-weight:600}
-  .header-grid{
-    margin-top:10px;
-    display:grid;gap:10px;
-    grid-template-columns: 1fr 1fr;
-    align-items:start;
-  }
-  .header-item{
-    background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px
-  }
-  .header-item .stack{display:flex;flex-direction:column;gap:6px;width:100%}
-  .header-item .inline{display:flex;align-items:center;gap:8px}
-  .header-item input[type=checkbox]{margin:0}
-  .amount-wrap{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
-  .amount-wrap label{margin:0}
-
-  .onetime-charge-options {
-    grid-column: 2 / -1;
-    opacity: 0.5;
-    pointer-events: none;
-  }
-  .onetime-charge-options.active {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  .onetime-charge-options fieldset{
-    border: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;
-  }
-  .onetime-charge-options input[type="number"]{ width: auto; margin-top: 0; }
-  .onetime-charge-options input[type="number"][disabled] { background-color: #f6f7f9; cursor: not-allowed; }
-  .onetime-charge-options .row{ align-items: center; }
-  .onetime-charge-options .row:has(#Onetimecharge_alloutstanding:not(:checked)) .option-label { color: var(--muted); }
-  .onetime-charge-options .row:has(#Onetimecharge_specific:not(:checked)) .option-label { color: var(--muted); }
-  .onetime-charge-options .row:has(#Onetimecharge_specific:not(:checked)) #Onetimecharge_amt { opacity: 0.5; }
-
-  /* Card number */
-  .card-number-block .card-number-inputs{display:flex;gap:8px;margin-top:8px}
-  .card-digit{width:80px;padding:8px;border-radius:10px;border:1px solid #ddd;text-align:center;font-size:1.05rem;background:#fff}
-  .card-digit:focus{outline:2px solid rgba(0,122,255,0.15)}
-
-  /* Policy grid */
-  .policy-grid{display:grid;grid-template-columns:1fr;gap:12px}
-  .policy{background:#fff;padding:12px;border-radius:10px;border:1px solid #eee;position:relative}
-  .policy h3{margin:0 0 8px 0;font-size:0.95rem;display:flex;align-items:center;justify-content:space-between}
-  .policy .remove-btn{background:transparent;border:1px solid var(--line);color:#333;border-radius:8px;padding:6px 10px;font-size:0.9rem}
-  .policy .remove-btn:hover{border-color:#d0d0d7}
+  /* Nominee grid */
+  .nominee-grid{display:grid;grid-template-columns:1fr;gap:12px}
+  .nominee{background:#fff;padding:12px;border-radius:10px;border:1px solid #eee;position:relative}
+  .nominee h3{margin:0 0 8px 0;font-size:0.95rem;display:flex;align-items:center;justify-content:space-between}
+  .nominee .remove-btn{background:transparent;border:1px solid var(--line);color:#333;border-radius:8px;padding:6px 10px;font-size:0.9rem}
+  .nominee .remove-btn:hover{border-color:#d0d0d7}
 
   /* Signature preview tiles */
   .sig-preview{
@@ -146,7 +100,7 @@
 
   <section class="section" id="sectionA">
     <h2>Section B — Nominee Entries</h2>
-    <div id="nomineesContainer" class="policy-grid"></div>
+    <div id="nomineesContainer" class="nominee-grid"></div>
     <div class="row">
       <button id="addNominee">+ Add Another Nominee</button>
       <small class="muted">Up to 5 Nominees</small>
