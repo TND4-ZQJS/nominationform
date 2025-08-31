@@ -321,10 +321,10 @@ function createNomineeEntry(index){
       <input type="text" id="Nom_Nominee${index}_Name">
     </label>
     <label>Day of Birth (Day)
-      <select id="Nom_Nominee${index}_DD"><option value="">DD</option>${dayOptionsHTML()}</select>
+      <select id="Nom_Nominee${index}_DD"><option value="">-- Day (DD) --</option>${dayOptionsHTML()}</select>
     </label>
     <label>Month of Birth (Month)
-      <select id="Nom_Nominee${index}_MM"><option value="">MM</option>${monthOptionsHTML()}</select>
+      <select id="Nom_Nominee${index}_MM"><option value="">-- Month (MM) --</option>${monthOptionsHTML()}</select>
     </label>
     <label>Year of Birth (Year)
       <input type="text" id="Nom_Nominee${index}_YYYY" placeholder="YYYY" maxlength="4">
@@ -621,16 +621,60 @@ async function fillPDF(){
     const pdfDoc = await PDFLib.PDFDocument.load(bytes);
     const form = pdfDoc.getForm();
 
-    // SECTION A
-    const created = policiesContainer.querySelectorAll(".policy");
-    created.forEach(p => {
-      const idx = p.dataset.index;
-      const policyVal = p.querySelector(`#PolicyNo${idx}`)?.value || "";
-      const insuredVal = p.querySelector(`#Insured${idx}`)?.value || "";
-      safeSetText(form, `PolicyNo${idx}`, policyVal);
-      safeSetText(form, `Insured${idx}`, insuredVal);
-      applyRelationship(form, idx);
-    });
+   // Policy Details
+
+    
+    // Nominee Container
+    const nomineesContainer = document.querySelector(".nominee-container");
+const nominees = nomineesContainer.querySelectorAll(".nominee");
+
+nominees.forEach(n => {
+  const idx = n.dataset.index; // example: "1", "2"
+  
+  // Now read all fields for this nominee
+  const nameVal = n.querySelector(`#Nom_Nominee${idx}_Name`)?.value || "";
+  const ddVal   = n.querySelector(`#Nom_Nominee${idx}_DD`)?.value || "";
+  const mmVal   = n.querySelector(`#Nom_Nominee${idx}_MM`)?.value || "";
+  const yyyyVal = n.querySelector(`#Nom_Nominee${idx}_YYYY`)?.value || "";
+  const nricVal = n.querySelector(`#Nom_Nominee${idx}_NRICPassport`)?.value || "";
+  const emailVal = n.querySelector(`#Nom_Nominee${idx}_Email`)?.value || "";
+  const mobileVal = n.querySelector(`#Nom_Nominee${idx}_Mobile`)?.value || "";
+  const nationalityVal = n.querySelector(`#Nom_Nominee${idx}_Nationality`)?.value || "";
+  const relationVal = n.querySelector(`#Nom_Nominee${idx}_Relationship`)?.value || "";
+  const shareVal = n.querySelector(`#Nom_Nominee${idx}_Share`)?.value || "";
+
+  const corres1 = n.querySelector(`#Nom_Nominee${idx}_CorresAdd_Line1`)?.value || "";
+  const corres2 = n.querySelector(`#Nom_Nominee${idx}_CorresAdd_Line2`)?.value || "";
+  const corresPost = n.querySelector(`#Nom_Nominee${idx}_CorresAdd_Postcode`)?.value || "";
+  const corresCountry = n.querySelector(`#Nom_Nominee${idx}_CorresAdd_Country`)?.value || "";
+
+  const res1 = n.querySelector(`#Nom_Nominee${idx}_ResAdd_Line1`)?.value || "";
+  const res2 = n.querySelector(`#Nom_Nominee${idx}_ResAdd_Line2`)?.value || "";
+  const resPost = n.querySelector(`#Nom_Nominee${idx}_ResAdd_Postcode`)?.value || "";
+  const resCountry = n.querySelector(`#Nom_Nominee${idx}_ResAdd_Country`)?.value || "";
+
+  // Push into PDF fields
+  safeSetText(form, `Nom_Nominee${idx}_Name`, nameVal);
+  safeSetText(form, `Nom_Nominee${idx}_DD`, ddVal);
+  safeSetText(form, `Nom_Nominee${idx}_MM`, mmVal);
+  safeSetText(form, `Nom_Nominee${idx}_YYYY`, yyyyVal);
+  safeSetText(form, `Nom_Nominee${idx}_NRICPassport`, nricVal);
+  safeSetText(form, `Nom_Nominee${idx}_Email`, emailVal);
+  safeSetText(form, `Nom_Nominee${idx}_Mobile`, mobileVal);
+  safeSetText(form, `Nom_Nominee${idx}_Nationality`, nationalityVal);
+  safeSetText(form, `Nom_Nominee${idx}_Relationship`, relationVal);
+  safeSetText(form, `Nom_Nominee${idx}_Share`, shareVal);
+
+  safeSetText(form, `Nom_Nominee${idx}_CorresAdd_Line1`, corres1);
+  safeSetText(form, `Nom_Nominee${idx}_CorresAdd_Line2`, corres2);
+  safeSetText(form, `Nom_Nominee${idx}_CorresAdd_Postcode`, corresPost);
+  safeSetText(form, `Nom_Nominee${idx}_CorresAdd_Country`, corresCountry);
+
+  safeSetText(form, `Nom_Nominee${idx}_ResAdd_Line1`, res1);
+  safeSetText(form, `Nom_Nominee${idx}_ResAdd_Line2`, res2);
+  safeSetText(form, `Nom_Nominee${idx}_ResAdd_Postcode`, resPost);
+  safeSetText(form, `Nom_Nominee${idx}_ResAdd_Country`, resCountry);
+});
 
     
     // SIGN META
