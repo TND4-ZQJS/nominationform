@@ -625,8 +625,8 @@ async function fillPDF(){
 
     
     // Nominee Container
-    const nomineesContainer = document.querySelector(".nominee-container");
-const nominees = nomineesContainer.querySelectorAll(".nominee");
+  const nomineesContainer = document.getElementById("nomineesContainer");
+  const nominees = nomineesContainer.querySelectorAll(".nominee");
 
 nominees.forEach(n => {
   const idx = n.dataset.index; // example: "1", "2"
