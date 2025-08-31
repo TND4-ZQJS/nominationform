@@ -108,112 +108,128 @@
   </section>
 
 <section class="section">
-  <h2>Section E — Signature</h2>
+  <h2>Section E — Signature Details</h2>
 
-  <label>Policy Owner's Name
-    <input id="Sign_OwnerName" type="text">
+  <!-- SECTION: Signature Details (Date/Place) -->
+  <section class="section">
+    <h2>Signature Details</h2>
+    <div class="row">
+      <label style="flex:1">Signed at (State)
+        <select id="Nom_Nominee_SignState" class="persist">
+          <option value="">-- Select State --</option>
+          <!-- Same label set used in your reference -->
+          <option>SELANGOR</option><option>K.LUMPUR</option><option>MELAKA</option><option>JOHOR</option>
+          <option>N.SEMBILAN</option><option>PENANG</option><option>PERAK</option><option>SABAH</option>
+          <option>SARAWAK</option><option>KELANTAN</option><option>PERLIS</option><option>T'GANU</option>
+          <option>PAHANG</option><option>KEDAH</option>
+        </select>
+      </label>
+    </div>
+    <div class="row">
+      <label style="flex:1">Day
+        <select id="Nom_Nominee_Day" class="persist">
+          <option value="">-- Day (DD) --</option>
+          <option>01</option><option>02</option><option>03</option><option>04</option>
+          <option>05</option><option>06</option><option>07</option><option>08</option>
+          <option>09</option><option>10</option><option>11</option><option>12</option>
+          <option>13</option><option>14</option><option>15</option><option>16</option>
+          <option>17</option><option>18</option><option>19</option><option>20</option>
+          <option>21</option><option>22</option><option>23</option><option>24</option>
+          <option>25</option><option>26</option><option>27</option><option>28</option>
+          <option>29</option><option>30</option><option>31</option>
+        </select>
+      </label>
+      <label style="flex:1">Month
+        <select id="Nom_Nominee_Month" class="persist">
+          <option value="">-- Month --</option>
+          <option>JANUARY</option><option>FEBRUARY</option><option>MARCH</option><option>APRIL</option>
+          <option>MAY</option><option>JUNE</option><option>JULY</option><option>AUGUST</option>
+          <option>SEPTEMBER</option><option>OCTOBER</option><option>NOVEMBER</option><option>DECEMBER</option>
+        </select>
+      </label>
+      <label style="flex:1">Year
+        <select id="Nom_Nominee_Year" class="persist">
+          <option value="">-- Year (YYYY) --</option>
+          <option>2025</option><option>2026</option>
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <!-- SECTION: Owner/Policyowner Signature -->
+  <section class="section">
+  <h3>Policy Owner's Signature</h3>
+  <div class="row">
+    <label>Policy Owner's Name
+    <input id="Nom_Nominee_PolicyOwner_Name" type="text">
   </label>
-  <div class="row" style="margin-top: -10px; margin-bottom: 12px;">
-    <label class="inline">
-      <input type="checkbox" id="SameAsCardOwner">
-      <span>Same as Card owner</span>
+    <label style="flex:1">NIRC/Passport No.
+      <input id="Nom_Nominee_PolicyOwner_NRIC" type="text">
     </label>
   </div>
 
-  <div class="row">
-    <label style="flex:1">IC No.
-      <input id="Sign_OwnerNIRC" type="text">
-    </label>
-    <label style="flex:1">Signed at (State)
-      <select id="Sign_State_Select">
-        <option value="">-- Select State --</option>
-      </select>
-    </label>
-  </div>
-
-  <div class="row">
-    <label>Signed Date (DD)
-      <select id="Sign_Date_Select"></select>
-    </label>
-    <label>Signed Month
-      <select id="Sign_Month_Select"></select>
-    </label>
-    <label>Signed Year (YYYY)
-      <select id="Sign_Year_Select"></select>
-    </label>
-  </div>
-
-  <!-- Tap-to-sign previews (Owner + Payor) -->
+  <!-- Tap-to-sign previews (Owner) -->
   <h3>Policy Owner Signature</h3>
   <div class="sig-preview" id="preview_owner" onclick="openSig('owner')">
-    <span>Tap to Sign (Owner)</span>
+    <span>Tap to Sign (Policy Owner)</span>
   </div>
   <div class="row">
     <button id="clearPreviewOwner" class="secondary" type="button">Clear Signature</button>
   </div>
+  </section>
 
-  <div id="payorSignatureSection" style="display:none; margin-top: 20px;">
-    <h3>Fill and Sign only if Payor is not Policy Owner</h3>
-    <label>Payor's Name
-      <input id="Sign_PayorName" type="text">
+    <!-- SECTION: Witness Signature -->
+  <section class="section">
+  <h3>Witness' Signature</h3>
+  <div class="row">
+    <label>Wintess' Name
+    <input id="Nom_Nominee_Witness_Name" type="text">
+  </label>
+    <label style="flex:1">NIRC/Passport No.
+      <input id="Nom_Nominee_Witness_NIRC" type="text">
     </label>
-    <div class="row" style="margin-top: -10px; margin-bottom: 12px;">
-      <label class="inline">
-        <input type="checkbox" id="SameAsThirdPartyPayorName">
-        <span>Same as Third Party Payor</span>
-      </label>
-    </div>
-
-    <label>Payor's IC No.
-      <input id="Sign_PayorNIRC" type="text">
+    <label style="flex:1">Mobile
+      <input id="Nom_Nominee_Witness_Mobile" type="text">
     </label>
-    <div class="row" style="margin-top: -10px; margin-bottom: 12px;">
-      <label class="inline">
-        <input type="checkbox" id="SameAsThirdPartyPayorNIRC">
-        <span>Same as Third Party Payor</span>
-      </label>
-    </div>
-
-    <h3>Payor Signature</h3>
-    <div class="sig-preview" id="preview_payor" onclick="openSig('payor')">
-      <span>Tap to Sign (Payor)</span>
-    </div>
-    <div class="row">
-      <button id="clearPreviewPayor" class="secondary" type="button">Clear Signature</button>
-    </div>
   </div>
-</section>
+
+  <!-- Tap-to-sign previews (Witness) -->
+  <div class="sig-preview" id="preview_owner" onclick="openSig('witness')">
+    <span>Tap to Sign (Witness)</span>
+  </div>  
+  <div class="row">
+    <button id="clearPreviewWitness" class="secondary" type="button">Clear Signature</button>
+  </div>
+  </section>
+
+     <!-- SECTION: Witness Signature -->
+  <section class="section">
+  <h3>Witness' Signature</h3>
+  <div class="row">
+    <label>Wintess' Name
+    <input id="Nom_Nominee_Witness_Name" type="text">
+  </label>
+    <label style="flex:1">NIRC/Passport No.
+      <input id="Nom_Nominee_Witness_NIRC" type="text">
+    </label>
+    <label style="flex:1">Mobile
+      <input id="Nom_Nominee_Witness_Mobile" type="text">
+    </label>
+  </div>
+
+  <!-- Tap-to-sign previews (Trustee) -->
+  <div class="sig-preview" id="preview_trustee" onclick="openSig('trustee')">
+    <span>Tap to Sign (Trustee)</span>
+  </div>  
+  <div class="row">
+    <button id="clearPreviewTrustee" class="secondary" type="button">Clear Signature</button>
+  </div>
+  </section>
 
   <section class="section actions">
     <button id="generate">Generate PDF</button>
     <button id="resetAll" class="secondary">Reset All</button>
   </section>
-
-  <div class="hidden-inputs">
-  <h3>Owner Signature</h3>
-  <label>
-    X: <input type="number" id="sigX_owner" value="50" />
-  </label>
-  <label>
-    Y: <input type="number" id="sigY_owner" value="490" />
-  </label>
-  <label>
-    Scale (%): <input type="number" id="sigScale_owner" value="45" />
-  </label>
-</div>
-
-<div class="hidden-inputs">
-  <h3>Payor Signature</h3>
-  <label>
-    X: <input type="number" id="sigX_payor" value="370" />
-  </label>
-  <label>
-    Y: <input type="number" id="sigY_payor" value="490" />
-  </label>
-  <label>
-    Scale (%): <input type="number" id="sigScale_payor" value="40" />
-  </label>
-</div>
 
   <footer>
     <small>Make sure <code>Credit Card Enrolment Form_LF4092_200524_fillable.pdf</code> is in the same folder.</small>
@@ -311,13 +327,13 @@ function createNomineeEntry(index){
     <label>Nominee Name
       <input type="text" id="Nom_Nominee${index}_Name">
     </label>
-    <label>Date of Birth (Day)
+    <label>Day of Birth (Day)
       <select id="Nom_Nominee${index}_DD"><option value="">DD</option>${dayOptionsHTML()}</select>
     </label>
-    <label>Date of Birth (Month)
+    <label>Month of Birth (Month)
       <select id="Nom_Nominee${index}_MM"><option value="">MM</option>${monthOptionsHTML()}</select>
     </label>
-    <label>Birthday (Year)
+    <label>Year of Birth (Year)
       <input type="text" id="Nom_Nominee${index}_YYYY" placeholder="YYYY" maxlength="4">
     </label>
     <label>NRIC/Passport No.
