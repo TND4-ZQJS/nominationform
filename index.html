@@ -427,8 +427,12 @@ function createNomineeEntry(index){
 
   // Auto uppercase for all text inputs
   wrap.querySelectorAll("input[type=text]").forEach(el=>{
-    el.addEventListener("input", ()=>{ el.value = el.value.toUpperCase(); saveElValue(el); });
+  if(el.id.includes("_Email")) return; // ❌ skip auto-uppercase for Email
+  el.addEventListener("input", ()=>{ 
+    el.value = el.value.toUpperCase(); 
+    saveElValue(el); 
   });
+});
 
   // Bind all inputs/selects to save
   wrap.querySelectorAll("input, select").forEach(el=>{
