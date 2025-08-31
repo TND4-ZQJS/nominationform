@@ -158,7 +158,7 @@
 
   <!-- SECTION: Owner/Policyowner Signature -->
   <section class="section">
-  <h3>Policy Owner's Signature</h3>
+  <h3>Policy Owner Signature</h3>
   <div class="row">
     <label>Policy Owner's Name
     <input id="Nom_Nominee_PolicyOwner_Name" type="text">
@@ -499,8 +499,15 @@ function resizeSigCanvas(){
 }
 
 function openSig(target){
-  sigTarget = target; // 'owner' | 'payor'
-  $("sigModalTitle").textContent = target === 'owner' ? "Sign: Policy Owner" : "Sign: Payor";
+  sigTarget = target; // 'owner' | 'witness' | 'trustee'
+
+if (target === 'owner') {
+  $("sigModalTitle").textContent = "Sign: Policy Owner";
+} else if (target === 'witness') {
+  $("sigModalTitle").textContent = "Sign: Witness";
+} else if (target === 'trustee') {
+  $("sigModalTitle").textContent = "Sign: Trustee";
+}
 
   sigModal.style.display = "block";
   sigModal.setAttribute("aria-hidden", "false");
@@ -588,12 +595,16 @@ $("clearPreviewOwner").addEventListener("click", ()=>{
   localStorage.removeItem("sig_owner");
   $("preview_owner").innerHTML = `<span>Tap to Sign (Owner)</span>`;
 });
-$("clearPreviewPayor").addEventListener("click", ()=>{
-  localStorage.removeItem("sig_payor");
-  $("preview_payor").innerHTML = `<span>Tap to Sign (Payor)</span>`;
+$("clearPreviewWitness").addEventListener("click", ()=>{
+  localStorage.removeItem("sig_witness");
+  $("preview_witness").innerHTML = `<span>Tap to Sign (Witness)</span>`;
+});
+$("clearPreviewTrustee").addEventListener("click", ()=>{
+  localStorage.removeItem("sig_trustee");
+  $("preview_trustee").innerHTML = `<span>Tap to Sign (Trustee)</span>`;
 });
 window.addEventListener("DOMContentLoaded", ()=>{
-  ["owner","payor"].forEach(role=>{
+  ["owner","witness","trustee"].forEach(role=>{
     const saved = localStorage.getItem("sig_"+role);
     if(saved){ $("preview_"+role).innerHTML = `<img alt="Signature ${role}" src="${saved}">`; }
   });
