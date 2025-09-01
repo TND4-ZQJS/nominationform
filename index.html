@@ -642,17 +642,25 @@ async function fillPDF(){
     const pdfDoc = await PDFLib.PDFDocument.load(bytes);
     const form = pdfDoc.getForm();
 
-   // Policy Details - Section A
-  safeSetText(pdfForm, "Nom_PolicyNumber", $("Nom_PolicyNumber").value);
-  safeSetText(pdfForm, "Nom_InsuredName", $("Nom_InsuredName").value);
+   // Section A – Policy Details
+    safeSetText(form, "Nom_PolicyNumber", $("Nom_PolicyNumber").value);
+    safeSetText(form, "Nom_InsuredName", $("Nom_InsuredName").value);
 
-  safeCheck(pdfForm, "Nom_MaritalStatus_Single", $("Nom_MaritalStatus_Single").checked);
-  safeCheck(pdfForm, "Nom_MaritalStatus_Married", $("Nom_MaritalStatus_Married").checked);
-  safeCheck(pdfForm, "Nom_MaritalStatus_Widowed", $("Nom_MaritalStatus_Widowed").checked);
-  safeCheck(pdfForm, "Nom_MaritalStatus_Divorced", $("Nom_MaritalStatus_Divorced").checked);
+    safeCheck(form, "Nom_MaritalStatus_Single", $("Nom_MaritalStatus_Single").checked);
+    safeCheck(form, "Nom_MaritalStatus_Married", $("Nom_MaritalStatus_Married").checked);
+    safeCheck(form, "Nom_MaritalStatus_Widowed", $("Nom_MaritalStatus_Widowed").checked);
+    safeCheck(form, "Nom_MaritalStatus_Divorced", $("Nom_MaritalStatus_Divorced").checked);
 
-  safeCheck(pdfForm, "Nom_Religion_Muslim", $("Nom_Religion_Muslim").checked);
-  safeCheck(pdfForm, "Nom_Religion_NonMuslim", $("Nom_Religion_NonMuslim").checked);
+    safeCheck(form, "Nom_Religion_Muslim", $("Nom_Religion_Muslim").checked);
+    safeCheck(form, "Nom_Religion_NonMuslim", $("Nom_Religion_NonMuslim").checked);
+
+  safeCheck(form, "Nom_MaritalStatus_Single", $("Nom_MaritalStatus_Single").checked);
+  safeCheck(form, "Nom_MaritalStatus_Married", $("Nom_MaritalStatus_Married").checked);
+  safeCheck(form, "Nom_MaritalStatus_Widowed", $("Nom_MaritalStatus_Widowed").checked);
+  safeCheck(form, "Nom_MaritalStatus_Divorced", $("Nom_MaritalStatus_Divorced").checked);
+
+  safeCheck(form, "Nom_Religion_Muslim", $("Nom_Religion_Muslim").checked);
+  safeCheck(form, "Nom_Religion_NonMuslim", $("Nom_Religion_NonMuslim").checked);
     
     // Nominee Container - Section B
   const nomineesContainer = document.getElementById("nomineesContainer");
@@ -707,10 +715,10 @@ async function fillPDF(){
 
 
   // Signing Details - Section C 
-  safeSetText(pdfForm, "Nom_Nominee_SignState", $("Nom_Nominee_SignState").value);
-  safeSetText(pdfForm, "Nom_Nominee_Day", $("Nom_Nominee_Day").value);
-  safeSetText(pdfForm, "Nom_Nominee_Month", $("Nom_Nominee_Month").value);
-  safeSetText(pdfForm, "Nom_Nominee_Year", $("Nom_Nominee_Year").value);
+  safeSetText(form, "Nom_Nominee_SignState", $("Nom_Nominee_SignState").value);
+  safeSetText(form, "Nom_Nominee_Day", $("Nom_Nominee_Day").value);
+  safeSetText(form, "Nom_Nominee_Month", $("Nom_Nominee_Month").value);
+  safeSetText(form, "Nom_Nominee_Year", $("Nom_Nominee_Year").value);
 
   safeSetText(pdfForm, "Nom_Nominee_PolicyOwner_Name", $("Nom_Nominee_PolicyOwner_Name").value);
   safeSetText(pdfForm, "Nom_Nominee_PolicyOwner_NRIC", $("Nom_Nominee_PolicyOwner_NRIC").value);
