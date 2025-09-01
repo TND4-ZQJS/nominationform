@@ -317,6 +317,9 @@ const nomineesContainer = $("nomineesContainer");
 const addNomineeBtn = $("addNominee");
 let nomineeCount = 0;
 
+// Always create the first nominee entry on load
+addNominee();
+  
 function relationshipOptionsHTML(selected=""){
   const opts = ["SPOUSE","SON","DAUGHTER","PARENT","GRANDPARENT","SIBLING","FRIEND"];
   return opts.map(v=> `<option value="${v}" ${v===selected?"selected":""}>${v}</option>`).join("");
