@@ -317,8 +317,11 @@ const nomineesContainer = $("nomineesContainer");
 const addNomineeBtn = $("addNominee");
 let nomineeCount = 0;
 
-// Always create the first nominee entry on load
-addNominee();
+// On page load
+if (!localStorage.getItem("Nom_Nominee1_Name")) {
+  // no saved nominee data, so create Nominee 1
+  addNominee();
+}
   
 function relationshipOptionsHTML(selected=""){
   const opts = ["SPOUSE","SON","DAUGHTER","PARENT","GRANDPARENT","SIBLING","FRIEND"];
