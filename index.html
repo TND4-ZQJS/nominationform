@@ -289,8 +289,30 @@ function autoBindSave(el){
   el.addEventListener((el.type === 'checkbox' || el.type === 'radio') ? 'change' : 'input', ()=> saveElValue(el));
 }
 
+/* ---------- AutoBind Save + Uppercase ---------- */
+window.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("input, select, textarea").forEach(el => {
+    if (!el.id) return; // skip if no ID
 
-/* ---------- SECTION A: Dynamic policies ---------- */
+    // Restore + bind saving
+    autoBindSave(el);
+
+    // Auto-uppercase rule (exclude Email)
+    if (el.type === "text" || el.tagName === "TEXTAREA") {
+      if (!el.id.toLowerCase().includes("email")) {
+        el.addEventListener("input", () => {
+          const cursor = el.selectionStart;
+          el.value = el.value.toUpperCase();
+          el.setSelectionRange(cursor, cursor); // keep caret
+          saveElValue(el); // ensure saved after transform
+        });
+      }
+    }
+  });
+});
+
+
+/* ---------- SECTION B: Dynamic policies ---------- */
 const nomineesContainer = $("nomineesContainer");
 const addNomineeBtn = $("addNominee");
 let nomineeCount = 0;
