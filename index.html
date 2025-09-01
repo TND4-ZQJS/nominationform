@@ -774,7 +774,7 @@ const sigWitness = localStorage.getItem("sig_witness");
 if (sigWitness) {
   try {
     const imgWitness = await pdfDoc.embedPng(sigWitness);
-    const { width, height } = imgPayor.size();
+    const { width, height } = imgWitness.size();
 
     const previewEl = document.getElementById("preview_witness");
     const boxW = previewEl.offsetWidth;
