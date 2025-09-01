@@ -726,14 +726,14 @@ if (sigOwner) {
   }
 }
 
-// Payor signature
-const sigPayor = localStorage.getItem("sig_payor");
-if (sigPayor) {
+// Witness signature
+const sigWitness = localStorage.getItem("sig_witness");
+if (sigWitness) {
   try {
-    const imgPayor = await pdfDoc.embedPng(sigPayor);
+    const imgWitness = await pdfDoc.embedPng(sigWitness);
     const { width, height } = imgPayor.size();
 
-    const previewEl = document.getElementById("preview_payor");
+    const previewEl = document.getElementById("preview_witness");
     const boxW = previewEl.offsetWidth;
     const boxH = previewEl.offsetHeight;
 
@@ -748,7 +748,41 @@ if (sigPayor) {
     drawW *= factor;
     drawH *= factor;
 
-    page.drawImage(imgPayor, {
+    page.drawImage(imgWitness, {
+      x: posX,
+      y: posY,
+      width: drawW,
+      height: drawH
+    });
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+
+// Trustee signature
+const sigTrustee = localStorage.getItem("sig_trustee");
+if (sigTrustee) {
+  try {
+    const imgTrustee = await pdfDoc.embedPng(sigTrustee);
+    const { width, height } = imgTrustee.size();
+
+    const previewEl = document.getElementById("preview_trustee");
+    const boxW = previewEl.offsetWidth;
+    const boxH = previewEl.offsetHeight;
+
+    const scale = Math.min(boxW / width, boxH / height);
+    let drawW = width * scale;
+    let drawH = height * scale;
+
+    const factor = 0.40;    // 45% scale
+    const posX = 370;         // X position on PDF
+    const posY = 490;        // Y position on PDF
+
+    drawW *= factor;
+    drawH *= factor;
+
+    page.drawImage(imgTrustee, {
       x: posX,
       y: posY,
       width: drawW,
@@ -795,7 +829,7 @@ function resetAll(){
        "Sign_PayorName", "Sign_PayorNIRC", "SameAsThirdPartyPayorName", "SameAsThirdPartyPayorNIRC",
        "PDPA",
        // signatures
-       "sig_owner", "sig_payor"
+       "sig_owner", "sig_trustee", "sig_witness"
       ].includes(k)
     ){
       localStorage.removeItem(k);
