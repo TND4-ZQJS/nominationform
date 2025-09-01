@@ -753,7 +753,7 @@ if (sigOwner) {
 
     const factor = 0.40;    // 40% scale
     const posX = 50;         // X position on PDF
-    const posY = 490;        // Y position on PDF
+    const posY = 200;        // Y position on PDF
 
     drawW *= factor;
     drawH *= factor;
@@ -888,7 +888,8 @@ function resetAll(){
 
   // Clear signature previews
   $("preview_owner").innerHTML = `<span>Tap to Sign (Owner)</span>`;
-  $("preview_payor").innerHTML = `<span>Tap to Sign (Payor)</span>`;
+  $("preview_witness").innerHTML = `<span>Tap to Sign (Witness)</span>`;
+  $("preview_trustee").innerHTML = `<span>Tap to Sign (Trustee)</span>`;
 
   // Rebuild policies
   policiesContainer.innerHTML = "";
