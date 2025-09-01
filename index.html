@@ -264,7 +264,7 @@ function safeCheck(form, name, checked){
   try{ const cb = form.getCheckBox(name); if (checked) cb.check(); else cb.uncheck(); } catch(e){ /* missing field ok */ }
 }
 
-/* ---------- Save indicator ---------- */
+/* ----------Universal Save indicator ---------- */
 const saveStatusEl = $("saveStatus");
 function showSaveStatus(){
   saveStatusEl.style.opacity = 1;
@@ -289,7 +289,7 @@ function autoBindSave(el){
   el.addEventListener((el.type === 'checkbox' || el.type === 'radio') ? 'change' : 'input', ()=> saveElValue(el));
 }
 
-/* ---------- AutoBind Save + Uppercase ---------- */
+/* ---------- Universal AutoBind Save + Uppercase ---------- */
 window.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll("input, select, textarea").forEach(el => {
     if (!el.id) return; // skip if no ID
@@ -312,7 +312,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 
-/* ---------- SECTION B: Dynamic policies ---------- */
+/* ---------- SECTION B: Dynamic Nominees Container ---------- */
 const nomineesContainer = $("nomineesContainer");
 const addNomineeBtn = $("addNominee");
 let nomineeCount = 0;
@@ -335,7 +335,7 @@ function monthOptionsHTML(selected=""){
   }).join("");
 }
   
-// ---- CREATE ENTRY ----
+// CREATE ENTRY
 function createNomineeEntry(index){
   const wrap = document.createElement("div");
   wrap.className = "nominee";
@@ -415,7 +415,7 @@ function createNomineeEntry(index){
     </div>
   `;
 
-  // Auto uppercase for all text inputs
+  // Auto uppercase for all text inputs (Nominee Container)
   wrap.querySelectorAll("input[type=text]").forEach(el=>{
   if(el.id.includes("_Email")) return; // ❌ skip auto-uppercase for Email
   el.addEventListener("input", ()=>{ 
@@ -424,7 +424,7 @@ function createNomineeEntry(index){
   });
 });
 
-  // Bind all inputs/selects to save
+  // Bind all inputs/selects to save (Nominess Container)
   wrap.querySelectorAll("input, select").forEach(el=>{
     autoBindSave(el);
     const saved = localStorage.getItem(el.id);
@@ -464,7 +464,7 @@ function createNomineeEntry(index){
   return wrap;
 }
 
-// ---- ADD ----
+// ADD Nominee Entry
 function addNominee(){
   if(nomineeCount >= MAX_NOMINEES) return;
   nomineeCount++;
@@ -642,17 +642,26 @@ async function fillPDF(){
     const pdfDoc = await PDFLib.PDFDocument.load(bytes);
     const form = pdfDoc.getForm();
 
-   // Policy Details
+   // Policy Details - Section A
+  safeSetText(pdfForm, "Nom_PolicyNumber", $("Nom_PolicyNumber").value);
+  safeSetText(pdfForm, "Nom_InsuredName", $("Nom_InsuredName").value);
 
+  safeCheck(pdfForm, "Nom_MaritalStatus_Single", $("Nom_MaritalStatus_Single").checked);
+  safeCheck(pdfForm, "Nom_MaritalStatus_Married", $("Nom_MaritalStatus_Married").checked);
+  safeCheck(pdfForm, "Nom_MaritalStatus_Widowed", $("Nom_MaritalStatus_Widowed").checked);
+  safeCheck(pdfForm, "Nom_MaritalStatus_Divorced", $("Nom_MaritalStatus_Divorced").checked);
+
+  safeCheck(pdfForm, "Nom_Religion_Muslim", $("Nom_Religion_Muslim").checked);
+  safeCheck(pdfForm, "Nom_Religion_NonMuslim", $("Nom_Religion_NonMuslim").checked);
     
-    // Nominee Container
+    // Nominee Container - Section B
   const nomineesContainer = document.getElementById("nomineesContainer");
   const nominees = nomineesContainer.querySelectorAll(".nominee");
 
-nominees.forEach(n => {
+  nominees.forEach(n => {
   const idx = n.dataset.index; // example: "1", "2"
   
-  // Now read all fields for this nominee
+  // Nominee Container - Now read all fields for this nominee
   const nameVal = n.querySelector(`#Nom_Nominee${idx}_Name`)?.value || "";
   const ddVal   = n.querySelector(`#Nom_Nominee${idx}_DD`)?.value || "";
   const mmVal   = n.querySelector(`#Nom_Nominee${idx}_MM`)?.value || "";
@@ -695,18 +704,22 @@ nominees.forEach(n => {
   safeSetText(form, `Nom_Nominee${idx}_ResAdd_Line2`, res2);
   safeSetText(form, `Nom_Nominee${idx}_ResAdd_Postcode`, resPost);
   safeSetText(form, `Nom_Nominee${idx}_ResAdd_Country`, resCountry);
-});
 
-    
-    // SIGN META
-    safeSetText(form, "Sign_OwnerName", $("Sign_OwnerName").value.toUpperCase() || "");
-    safeSetText(form, "Sign_OwnerNIRC", $("Sign_OwnerNIRC").value || "");
-    safeSetText(form, "Sign_State", $("Sign_State_Select").value || "");
-    safeSetText(form, "Sign_Date", $("Sign_Date_Select").value || "");
-    safeSetText(form, "Sign_Month", $("Sign_Month_Select").value || "");
-    safeSetText(form, "Sign_Year", $("Sign_Year_Select").value || "");
-    safeSetText(form, "Sign_PayorName", $("Sign_PayorName").value.toUpperCase() || "");
-    safeSetText(form, "Sign_PayorNIRC", $("Sign_PayorNIRC").value || "");
+
+  // Signing Details - Section C 
+  safeSetText(pdfForm, "Nom_Nominee_SignState", $("Nom_Nominee_SignState").value);
+  safeSetText(pdfForm, "Nom_Nominee_Day", $("Nom_Nominee_Day").value);
+  safeSetText(pdfForm, "Nom_Nominee_Month", $("Nom_Nominee_Month").value);
+  safeSetText(pdfForm, "Nom_Nominee_Year", $("Nom_Nominee_Year").value);
+
+  safeSetText(pdfForm, "Nom_Nominee_PolicyOwner_Name", $("Nom_Nominee_PolicyOwner_Name").value);
+  safeSetText(pdfForm, "Nom_Nominee_PolicyOwner_NRIC", $("Nom_Nominee_PolicyOwner_NRIC").value);
+  safeSetText(pdfForm, "Nom_Nominee_Trustee_Name", $("Nom_Nominee_Trustee_Name").value);
+  safeSetText(pdfForm, "Nom_Nominee_Trustee_NIRC", $("Nom_Nominee_Trustee_NIRC").value);
+
+  safeSetText(pdfForm, "Nom_Nominee_Witness_Name", $("Nom_Nominee_Witness_Name").value);
+  safeSetText(pdfForm, "Nom_Nominee_Witness_NIRC", $("Nom_Nominee_Witness_NIRC").value);
+  safeSetText(pdfForm, "Nom_Nominee_Witness_Mobile", $("Nom_Nominee_Witness_Mobile").value);
 
 
     /* --------- SIGNATURE IMAGE EMBEDDING (embedPng + drawImage) --------- */
