@@ -690,7 +690,6 @@ async function fillPDF(){
   const res2 = n.querySelector(`#Nom_Nominee${idx}_ResAdd_Line2`)?.value || "";
   const resPost = n.querySelector(`#Nom_Nominee${idx}_ResAdd_Postcode`)?.value || "";
   const resCountry = n.querySelector(`#Nom_Nominee${idx}_ResAdd_Country`)?.value || "";
-  });
 
   // Push into PDF fields
   safeSetText(form, `Nom_Nominee${idx}_Name`, nameVal);
