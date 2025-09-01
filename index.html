@@ -324,6 +324,7 @@ function createNomineeEntry(index){
     <label>Nominee Name
       <input type="text" id="Nom_Nominee${index}_Name">
     </label>
+    <div class="row">
     <label>Day of Birth (Day)
       <select id="Nom_Nominee${index}_DD"><option value="">-- Day (DD) --</option>${dayOptionsHTML()}</select>
     </label>
@@ -333,6 +334,7 @@ function createNomineeEntry(index){
     <label>Year of Birth (Year)
       <input type="text" id="Nom_Nominee${index}_YYYY" placeholder="YYYY" maxlength="4">
     </label>
+    </div>
     <label>NRIC/Passport No.
       <input type="text" id="Nom_Nominee${index}_NRICPassport">
     </label>
