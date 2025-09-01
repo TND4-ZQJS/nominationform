@@ -485,13 +485,6 @@ function renumberNominees(){
 // ---- INIT ----
 addNomineeBtn.addEventListener("click", addNominee);
 
-// Utils
-function autoBindSave(el){ el.addEventListener("input", ()=> saveElValue(el)); }
-function saveElValue(el){ 
-  if(el.type==="checkbox") localStorage.setItem(el.id, el.checked);
-  else localStorage.setItem(el.id, el.value);
-}
-function showSaveStatus(){ console.log("saved"); }
 
 // Restore saved nominees
 for(let i=1;i<=nomineeCount;i++){
