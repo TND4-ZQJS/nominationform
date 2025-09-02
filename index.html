@@ -25,21 +25,27 @@
   button.ghost{background:transparent;border:1px solid var(--line);color:#333}
   .actions{display:flex;gap:12px;align-items:center}
 
+.dob-group {
+  margin-bottom: 1rem;
+}
+
+.dob-group-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;  /* tight spacing to inputs */
+}
+
 .dob-row {
   display: flex;
-  flex-wrap: wrap;  /* allows wrapping when screen is narrow */
+  flex-wrap: wrap;
   gap: 12px;
 }
 
-.dob-field {
-  flex: 1 1 150px;  /* grow/shrink but minimum width */
+.dob-input {
+  flex: 1;
+  min-width: 100px;   /* ensures they don’t collapse too much on mobile */
   display: flex;
-  flex-direction: column;  /* stack label above input */
-}
-
-.dob-field label {
-  font-size: 14px;
-  margin-bottom: 4px;
+  flex-direction: column;
 }
 
   /* Nominee grid */
@@ -369,29 +375,29 @@ function createNomineeEntry(index){
     <label>Nominee Name
       <input type="text" id="Nom_Nominee${index}_Name">
     </label>
-    <div class="row">
-    <label style="flex:1">Date of Birth</label>
-    </div>
- <div class="dob-row">
-  <div class="dob-field">
-    <label for="Nom_Nominee${index}_DD">Day of Birth (Day)</label>
-    <select id="Nom_Nominee${index}_DD">
-      <option value="">-- Day (DD) --</option>
-      ${dayOptionsHTML()}
-    </select>
-  </div>
-  
-  <div class="dob-field">
-    <label for="Nom_Nominee${index}_MM">Month of Birth (Month)</label>
-    <select id="Nom_Nominee${index}_MM">
-      <option value="">-- Month (MM) --</option>
-      ${monthOptionsHTML()}
-    </select>
-  </div>
-  
-  <div class="dob-field">
-    <label for="Nom_Nominee${index}_YYYY">Year of Birth (Year)</label>
-    <input type="text" id="Nom_Nominee${index}_YYYY" placeholder="YYYY" maxlength="4">
+    <div class="dob-group">
+  <label class="dob-group-label">Date of Birth</label>
+  <div class="dob-row">
+    <label class="dob-input">
+      Day
+      <select id="Nom_Nominee${index}_DD">
+        <option value="">-- Day (DD) --</option>
+        ${dayOptionsHTML()}
+      </select>
+    </label>
+
+    <label class="dob-input">
+      Month
+      <select id="Nom_Nominee${index}_MM">
+        <option value="">-- Month (MM) --</option>
+        ${monthOptionsHTML()}
+      </select>
+    </label>
+
+    <label class="dob-input">
+      Year
+      <input type="text" id="Nom_Nominee${index}_YYYY" placeholder="YYYY" maxlength="4">
+    </label>
   </div>
 </div>
     <label>NRIC/Passport No.
