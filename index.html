@@ -25,6 +25,23 @@
   button.ghost{background:transparent;border:1px solid var(--line);color:#333}
   .actions{display:flex;gap:12px;align-items:center}
 
+.dob-row {
+  display: flex;
+  flex-wrap: wrap;  /* allows wrapping when screen is narrow */
+  gap: 12px;
+}
+
+.dob-field {
+  flex: 1 1 150px;  /* grow/shrink but minimum width */
+  display: flex;
+  flex-direction: column;  /* stack label above input */
+}
+
+.dob-field label {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
   /* Nominee grid */
   .nominee-grid{display:grid;grid-template-columns:1fr;gap:12px}
   .nominee{background:#fff;padding:12px;border-radius:10px;border:1px solid #eee;position:relative}
@@ -355,17 +372,28 @@ function createNomineeEntry(index){
     <div class="row">
     <label style="flex:1">Date of Birth</label>
     </div>
-    <div class="row">
-    <label style="flex:1">Day of Birth (Day)
-      <select id="Nom_Nominee${index}_DD"><option value="">-- Day (DD) --</option>${dayOptionsHTML()}</select>
-    </label>
-    <label style="flex:1">Month of Birth (Month)
-      <select id="Nom_Nominee${index}_MM"><option value="">-- Month (MM) --</option>${monthOptionsHTML()}</select>
-    </label>
-    <label style="flex:1">Year of Birth (Year)
-      <input type="text" id="Nom_Nominee${index}_YYYY" placeholder="YYYY" maxlength="4">
-    </label>
-    </div>
+ <div class="dob-row">
+  <div class="dob-field">
+    <label for="Nom_Nominee${index}_DD">Day of Birth (Day)</label>
+    <select id="Nom_Nominee${index}_DD">
+      <option value="">-- Day (DD) --</option>
+      ${dayOptionsHTML()}
+    </select>
+  </div>
+  
+  <div class="dob-field">
+    <label for="Nom_Nominee${index}_MM">Month of Birth (Month)</label>
+    <select id="Nom_Nominee${index}_MM">
+      <option value="">-- Month (MM) --</option>
+      ${monthOptionsHTML()}
+    </select>
+  </div>
+  
+  <div class="dob-field">
+    <label for="Nom_Nominee${index}_YYYY">Year of Birth (Year)</label>
+    <input type="text" id="Nom_Nominee${index}_YYYY" placeholder="YYYY" maxlength="4">
+  </div>
+</div>
     <label>NRIC/Passport No.
       <input type="text" id="Nom_Nominee${index}_NRICPassport">
     </label>
