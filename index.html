@@ -375,31 +375,21 @@ function createNomineeEntry(index){
     <label>Nominee Name
       <input type="text" id="Nom_Nominee${index}_Name">
     </label>
-    <div class="dob-group">
-  <label class="dob-group-label">Date of Birth</label>
-  <div class="dob-row">
-    <label class="dob-input">
-      Day
-      <select id="Nom_Nominee${index}_DD">
-        <option value="">-- Day (DD) --</option>
-        ${dayOptionsHTML()}
-      </select>
-    </label>
-
-    <label class="dob-input">
-      Month
-      <select id="Nom_Nominee${index}_MM">
-        <option value="">-- Month (MM) --</option>
-        ${monthOptionsHTML()}
-      </select>
-    </label>
-
-    <label class="dob-input">
-      Year
-      <input type="text" id="Nom_Nominee${index}_YYYY" placeholder="YYYY" maxlength="4">
-    </label>
-  </div>
+<div class="row">
+    <label>Date of Birth</label>
+    <div class="row" style="flex:1">
+        <label style="flex:1">Day of Birth (Day)
+            <select id="Nom_Nominee${index}_DD"><option value="">-- Day (DD) --</option>${dayOptionsHTML()}</select>
+        </label>
+        <label style="flex:1">Month of Birth (Month)
+            <select id="Nom_Nominee${index}_MM"><option value="">-- Month (MM) --</option>${monthOptionsHTML()}</select>
+        </label>
+        <label style="flex:1">Year of Birth (Year)
+            <input type="text" id="Nom_Nominee${index}_YYYY" placeholder="YYYY" maxlength="4">
+        </label>
+    </div>
 </div>
+
     <label>NRIC/Passport No.
       <input type="text" id="Nom_Nominee${index}_NRICPassport">
     </label>
