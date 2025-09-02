@@ -24,6 +24,7 @@
   button.secondary{background:#999}
   button.ghost{background:transparent;border:1px solid var(--line);color:#333}
   .actions{display:flex;gap:12px;align-items:center}
+  label-single{display:block;margin:1px 0;font-size:0.95rem
 
   /* Nominee grid */
   .nominee-grid{display:grid;grid-template-columns:1fr;gap:12px}
@@ -353,7 +354,7 @@ function createNomineeEntry(index){
       <input type="text" id="Nom_Nominee${index}_Name">
     </label>
     <div class="row">
-    <label>Date of Birth</label>
+    <label style="label-single">Date of Birth</label>
     </div>
     <div class="row">
     <label style="flex:1">Day of Birth (Day)
