@@ -25,28 +25,6 @@
   button.ghost{background:transparent;border:1px solid var(--line);color:#333}
   .actions{display:flex;gap:12px;align-items:center}
 
-.dob-group {
-  margin-bottom: 1rem;
-}
-
-.dob-group-label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 4px;  /* tight spacing to inputs */
-}
-
-.dob-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.dob-input {
-  flex: 1;
-  min-width: 100px;   /* ensures they don’t collapse too much on mobile */
-  display: flex;
-  flex-direction: column;
-}
 
   /* Nominee grid */
   .nominee-grid{display:grid;grid-template-columns:1fr;gap:12px}
@@ -372,23 +350,21 @@ function createNomineeEntry(index){
   wrap.innerHTML = `
     <h3><span>Nominee Entry ${index}</span>
     <button type="button" class="remove-btn" aria-label="Remove nominee">Remove</button></h3>
-    <label>Nominee Name
-      <input type="text" id="Nom_Nominee${index}_Name">
-    </label>
-<div class="row">
+    <label>Nominee Name<input type="text" id="Nom_Nominee${index}_Name"></label>
+    <div class="row">
     <label>Date of Birth</label>
-    <div class="row" style="flex:1">
-        <label style="flex:1">Day of Birth (Day)
+     <div class="row" style="flex:1">
+        <label style="flex:1">Day
             <select id="Nom_Nominee${index}_DD"><option value="">-- Day (DD) --</option>${dayOptionsHTML()}</select>
         </label>
-        <label style="flex:1">Month of Birth (Month)
+        <label style="flex:1">Month
             <select id="Nom_Nominee${index}_MM"><option value="">-- Month (MM) --</option>${monthOptionsHTML()}</select>
         </label>
-        <label style="flex:1">Year of Birth (Year)
+        <label style="flex:1">Year
             <input type="text" id="Nom_Nominee${index}_YYYY" placeholder="YYYY" maxlength="4">
         </label>
     </div>
-</div>
+  </div>
 
     <label>NRIC/Passport No.
       <input type="text" id="Nom_Nominee${index}_NRICPassport">
