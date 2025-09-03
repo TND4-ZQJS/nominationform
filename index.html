@@ -324,11 +324,6 @@ const nomineesContainer = $("nomineesContainer");
 const addNomineeBtn = $("addNominee");
 let nomineeCount = parseInt(localStorage.getItem("nomineeCount")) || 0;
 
-// On page load
-if (!localStorage.getItem("Nom_Nominee1_Name")) {
-  // no saved nominee data, so create Nominee 1
-  addNominee();
-}
   
 function relationshipOptionsHTML(selected=""){
   const opts = ["SPOUSE","SON","DAUGHTER","PARENT","GRANDPARENT","SIBLING","FRIEND"];
@@ -502,9 +497,14 @@ addNomineeBtn.addEventListener("click", addNominee);
 
 
 // Restore saved nominees (Nominee Container)
+// ---------- Nominee Initialization ----------
 if (nomineeCount === 0) {
-  addNominee();
+  // Always start with Nominee 1
+  nomineeCount = 1;
+  localStorage.setItem("nomineeCount", nomineeCount);
+  nomineesContainer.appendChild(createNomineeEntry(1));
 } else {
+  // Restore all saved nominees 1..nomineeCount
   for (let i = 1; i <= nomineeCount; i++) {
     nomineesContainer.appendChild(createNomineeEntry(i));
   }
@@ -877,56 +877,38 @@ if (sigTrustee) {
 
 /* ---------- RESET ALL DATA function ---------- */
 function resetAll() {
-  // Ask for confirmation first
   if (!confirm("Are you sure you want to reset the form? All saved data will be cleared.")) {
-    return; // user cancelled
+    return;
   }
 
-  // 1. Clear all nomination-related keys from localStorage
+  // 1) Clear ALL saved keys that belong to this form
+  //    (Everything starting with "Nom_" plus legacy signature keys)
   const keys = Object.keys(localStorage);
   keys.forEach(k => {
-    if (
-      // Section A (Policy Details)
-      k.startsWith("Nom_PolicyNumber") ||
-      k.startsWith("Nom_InsuredName") ||
-      k.startsWith("Nom_MaritalStatus_") ||
-      k.startsWith("Nom_Religion_") ||
+    if (k.startsWith("Nom_")) localStorage.removeItem(k);
+  });
+  // Legacy sig keys (if you still use these)
+  ["sig_owner","sig_witness","sig_trustee"].forEach(k => localStorage.removeItem(k));
 
-      // Section B (Nominees)
-      k.startsWith("Nom_Nominee1_") ||
-      k.startsWith("Nom_Nominee2_") ||
-      k.startsWith("Nom_Nominee3_") ||
-      k.startsWith("Nom_Nominee4_") ||
-      k.startsWith("Nom_Nominee5_") ||
-
-      // Section E (Signature + details)
-      k.startsWith("Nom_Nominee_Sign") ||
-      k.startsWith("Nom_Nominee_PolicyOwner_") ||
-      k.startsWith("Nom_Nominee_Witness_") ||
-      k.startsWith("Nom_Nominee_Trustee_") ||
-
-      // Signatures + counters
-      k === "nomineeCount" ||
-      k === "sig_owner" ||
-      k === "sig_witness" ||
-      k === "sig_trustee"
-    ) {
-      localStorage.removeItem(k);
-    }
+  // 2) Clear the live UI values for Section A/E (inputs that remain in DOM)
+  document.querySelectorAll("input, select, textarea").forEach(el => {
+    if (!el.id) return;
+    if (el.type === "checkbox" || el.type === "radio") el.checked = false;
+    else el.value = "";
   });
 
-  // 2. Reset nominees UI so that only Nominee 1 exists
+  // 3) Rebuild Nominees UI to exactly ONE card (Nominee 1)
   nomineesContainer.innerHTML = "";
-  nomineeCount = 0;
+  nomineeCount = 1;
+  localStorage.setItem("nomineeCount", 1);
+  nomineesContainer.appendChild(createNomineeEntry(1));
   addNomineeBtn.disabled = false;
-  addNominee(); // always recreate Nominee 1
 
-  // 3. Clear signature previews
-  $("preview_owner").innerHTML = `<span>Tap to Sign (Policy Owner)</span>`;
+  // 4) Reset signature previews
+  $("preview_owner").innerHTML   = `<span>Tap to Sign (Policy Owner)</span>`;
   $("preview_witness").innerHTML = `<span>Tap to Sign (Witness)</span>`;
   $("preview_trustee").innerHTML = `<span>Tap to Sign (Trustee)</span>`;
 
-  // 4. Show "saved" indicator for feedback
   showSaveStatus();
 }
 
