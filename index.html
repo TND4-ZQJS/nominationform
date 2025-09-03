@@ -316,7 +316,7 @@ window.addEventListener("DOMContentLoaded", () => {
 /* ---------- SECTION B: Dynamic Nominees Container ---------- */
 const nomineesContainer = $("nomineesContainer");
 const addNomineeBtn = $("addNominee");
-let nomineeCount = 0;
+let nomineeCount = parseInt(localStorage.getItem("nomineeCount")) || 0;
 
 // On page load
 if (!localStorage.getItem("Nom_Nominee1_Name")) {
@@ -496,9 +496,14 @@ addNomineeBtn.addEventListener("click", addNominee);
 
 
 // Restore saved nominees
-for(let i=1;i<=nomineeCount;i++){
-  nomineesContainer.appendChild(createNomineeEntry(i));
+if (nomineeCount === 0) {
+  addNominee();
+} else {
+  for (let i = 1; i <= nomineeCount; i++) {
+    nomineesContainer.appendChild(createNomineeEntry(i));
+  }
 }
+
 addNomineeBtn.disabled = nomineeCount >= MAX_NOMINEES;
 
 /* ---------- SIGNATURE MODAL LOGIC (Owner + Payor) with HiDPI scaling ---------- */
