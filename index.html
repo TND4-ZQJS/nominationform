@@ -874,47 +874,62 @@ if (sigTrustee) {
   }
 }
 
-/* ---------- Reset All ---------- */
-function resetAll(){
+
+/* ---------- RESET ALL DATA function ---------- */
+function resetAll() {
+  // Ask for confirmation first
+  if (!confirm("Are you sure you want to reset the form? All saved data will be cleared.")) {
+    return; // user cancelled
+  }
+
+  // 1. Clear all nomination-related keys from localStorage
   const keys = Object.keys(localStorage);
-  keys.forEach(k=>{
-    if(
-      k.startsWith("PolicyNo") || k.startsWith("Insured") || k.startsWith("Relationship") ||
-      ["policyCount","CCAgree","Onetimecharge_tick","onetime_charge_option",
-       "CardName","CardNo_1","CardNo_2","CardNo_3","CardNo_4","CardExpry_M_Select","CardExpry_Y_Select","CardBank_Select",
-       "CC_Tick","DebitC_Tick", "SameAsCardOwner", "Sign_OwnerName", "Sign_OwnerNIRC", "Sign_State_Select", "Sign_Date_Select", "Sign_Month_Select", "Sign_Year_Select",
-       "ThirdPP_Yes","ThirdPP_SubmittedNRIC", "ThirdPP_Name","ThirdPP_NIRC", "ThirdPP_Nationality", "ThirdPP_CorrespAdd_Line1", "ThirdPP_CorrespAdd_Line2",
-       "ThirdPP_CorrrepAdd_Postcode", "ThirdPP_CorrespAdd_Country", "ThirdPP_Email", "ThirdPP_Phone", "ThirdPP_Occupation", "ThirdPP_Employer",
-       "ThirdPP_NatureBusiness", "ThirdPP_Income", "ThirdPP_DOB_DD", "ThirdPP_DOB_MM", "ThirdPP_DOB_YYYY",
-       "ThirdPP_SourceFund_Self","ThirdPP_SourceFund_Parent","ThirdPP_SourceFund_Spouse","ThirdPP_SourceFund_Others","ThirdPP_SourceFund_Others_Write",
-       "ThirdPP_SourceWealth_EmployBus","ThirdPP_SourceWealth_Invest","ThirdPP_SourceWealth_Inherit","ThirdPP_SourceWealth_Savings",
-       "ThirdPP_SourceWealth_Parents","ThirdPP_SourceWealth_Spouse","ThirdPP_SourceWealth_Others","ThirdPP_SourceWealth_Others_Write",
-       "Sign_PayorName", "Sign_PayorNIRC", "SameAsThirdPartyPayorName", "SameAsThirdPartyPayorNIRC",
-       "PDPA",
-       // signatures
-       "sig_owner", "sig_trustee", "sig_witness"
-      ].includes(k)
-    ){
+  keys.forEach(k => {
+    if (
+      // Section A (Policy Details)
+      k.startsWith("Nom_PolicyNumber") ||
+      k.startsWith("Nom_InsuredName") ||
+      k.startsWith("Nom_MaritalStatus_") ||
+      k.startsWith("Nom_Religion_") ||
+
+      // Section B (Nominees)
+      k.startsWith("Nom_Nominee1_") ||
+      k.startsWith("Nom_Nominee2_") ||
+      k.startsWith("Nom_Nominee3_") ||
+      k.startsWith("Nom_Nominee4_") ||
+      k.startsWith("Nom_Nominee5_") ||
+
+      // Section E (Signature + details)
+      k.startsWith("Nom_Nominee_Sign") ||
+      k.startsWith("Nom_Nominee_PolicyOwner_") ||
+      k.startsWith("Nom_Nominee_Witness_") ||
+      k.startsWith("Nom_Nominee_Trustee_") ||
+
+      // Signatures + counters
+      k === "nomineeCount" ||
+      k === "sig_owner" ||
+      k === "sig_witness" ||
+      k === "sig_trustee"
+    ) {
       localStorage.removeItem(k);
     }
   });
 
-  // Clear signature previews
-  $("preview_owner").innerHTML = `<span>Tap to Sign (Owner)</span>`;
+  // 2. Reset nominees UI so that only Nominee 1 exists
+  nomineesContainer.innerHTML = "";
+  nomineeCount = 0;
+  addNomineeBtn.disabled = false;
+  addNominee(); // always recreate Nominee 1
+
+  // 3. Clear signature previews
+  $("preview_owner").innerHTML = `<span>Tap to Sign (Policy Owner)</span>`;
   $("preview_witness").innerHTML = `<span>Tap to Sign (Witness)</span>`;
   $("preview_trustee").innerHTML = `<span>Tap to Sign (Trustee)</span>`;
 
-  // Rebuild policies
-  policiesContainer.innerHTML = "";
-  policyCount = 0;
-  addPolicyBtn.disabled = false;
-  addPolicy();
-
-  updateOneTimeUI();
-  updateThirdPPUI();
-  updatePayorSectionUI();
+  // 4. Show "saved" indicator for feedback
   showSaveStatus();
 }
+
 
 /* ---------- Wire buttons ---------- */
 $("generate").addEventListener("click", fillPDF);
