@@ -348,7 +348,7 @@ function monthOptionsHTML(selected=""){
   }).join("");
 }
   
-// CREATE ENTRY
+// Create Nominee Entry
 function createNomineeEntry(index){
   const wrap = document.createElement("div");
   wrap.className = "nominee";
@@ -409,7 +409,7 @@ function createNomineeEntry(index){
         <input type="text" id="Nom_Nominee${index}_CorresAdd_Country">
       </label>
 
-      <!-- UI CONDITION 2: Residential Address -->
+<!-- UI CONDITION 2: Residential Address -->
       <label>
         <input type="checkbox" id="Nom_Nominee${index}_HasRes"> Residential Address (if different from Correspondence Address)
       </label>
@@ -449,7 +449,7 @@ function createNomineeEntry(index){
     }
   });
 
-  // UI condition toggle (Correspondence and Residential Address)
+  // UI condition toggle (Nominee Container - Correspondence and Residential Address)
   const hasCorres = wrap.querySelector("#Nom_Nominee"+index+"_HasCorres");
   const corresWrap = wrap.querySelector("#Nom_Nominee"+index+"_CorresWrap");
   const hasRes = wrap.querySelector("#Nom_Nominee"+index+"_HasRes");
@@ -464,10 +464,10 @@ function createNomineeEntry(index){
   hasCorres.addEventListener("change", updateVisibility);
   hasRes.addEventListener("change", updateVisibility);
 
-  // Restore visibility from saved state
+  // Restore visibility from saved state (Nominee Container)
   updateVisibility();
 
-  // Remove button
+  // Remove button (Nominee Container)
   wrap.querySelector(".remove-btn").addEventListener("click", ()=>{
     nomineesContainer.removeChild(wrap);
     nomineeCount = Math.max(0, nomineeCount - 1);
@@ -479,7 +479,7 @@ function createNomineeEntry(index){
   return wrap;
 }
 
-// ADD Nominee Entry
+// ADD Nominee Entry (Nominee Container)
 function addNominee(){
   if(nomineeCount >= MAX_NOMINEES) return;
   nomineeCount++;
@@ -490,18 +490,18 @@ function addNominee(){
   showSaveStatus();
 }
 
-// ---- RENUMBER ----
+// RENUMBER (Nominee Container)
 function renumberNominees(){
   const cards = Array.from(nomineesContainer.querySelectorAll(".nominee"));
   nomineeCount = cards.length;
   localStorage.setItem("nomineeCount", nomineeCount);
 }
 
-// ---- INIT ----
+// INIT (Nominee Container)
 addNomineeBtn.addEventListener("click", addNominee);
 
 
-// Restore saved nominees
+// Restore saved nominees (Nominee Container)
 if (nomineeCount === 0) {
   addNominee();
 } else {
@@ -662,17 +662,17 @@ async function fillPDF(){
     const pdfDoc = await PDFLib.PDFDocument.load(bytes);
     const form = pdfDoc.getForm();
 
-   // Section A – Policy Details
-    safeSetText(form, "Nom_PolicyNumber", $("Nom_PolicyNumber").value);
-    safeSetText(form, "Nom_InsuredName", $("Nom_InsuredName").value);
+   // Section A - Policy Details FillPDF
+  safeSetText(form, "Nom_PolicyNumber", $("Nom_PolicyNumber").value);
+  safeSetText(form, "Nom_InsuredName", $("Nom_InsuredName").value);
 
-    safeCheck(form, "Nom_MaritalStatus_Single", $("Nom_MaritalStatus_Single").checked);
-    safeCheck(form, "Nom_MaritalStatus_Married", $("Nom_MaritalStatus_Married").checked);
-    safeCheck(form, "Nom_MaritalStatus_Widowed", $("Nom_MaritalStatus_Widowed").checked);
-    safeCheck(form, "Nom_MaritalStatus_Divorced", $("Nom_MaritalStatus_Divorced").checked);
+  safeCheck(form, "Nom_MaritalStatus_Single", $("Nom_MaritalStatus_Single").checked);
+  safeCheck(form, "Nom_MaritalStatus_Married", $("Nom_MaritalStatus_Married").checked);
+  safeCheck(form, "Nom_MaritalStatus_Widowed", $("Nom_MaritalStatus_Widowed").checked);
+  safeCheck(form, "Nom_MaritalStatus_Divorced", $("Nom_MaritalStatus_Divorced").checked);
 
-    safeCheck(form, "Nom_Religion_Muslim", $("Nom_Religion_Muslim").checked);
-    safeCheck(form, "Nom_Religion_NonMuslim", $("Nom_Religion_NonMuslim").checked);
+  safeCheck(form, "Nom_Religion_Muslim", $("Nom_Religion_Muslim").checked);
+  safeCheck(form, "Nom_Religion_NonMuslim", $("Nom_Religion_NonMuslim").checked);
 
   safeCheck(form, "Nom_MaritalStatus_Single", $("Nom_MaritalStatus_Single").checked);
   safeCheck(form, "Nom_MaritalStatus_Married", $("Nom_MaritalStatus_Married").checked);
@@ -682,7 +682,7 @@ async function fillPDF(){
   safeCheck(form, "Nom_Religion_Muslim", $("Nom_Religion_Muslim").checked);
   safeCheck(form, "Nom_Religion_NonMuslim", $("Nom_Religion_NonMuslim").checked);
     
-    // Nominee Container - Section B
+    // Section B - Nominee Container FillPDF
   const nomineesContainer = document.getElementById("nomineesContainer");
   const nominees = nomineesContainer.querySelectorAll(".nominee");
 
@@ -711,7 +711,7 @@ async function fillPDF(){
   const resPost = n.querySelector(`#Nom_Nominee${idx}_ResAdd_Postcode`)?.value || "";
   const resCountry = n.querySelector(`#Nom_Nominee${idx}_ResAdd_Country`)?.value || "";
 
-  // Push into PDF fields
+  // Nominee Container - Push into PDF fields
   safeSetText(form, `Nom_Nominee${idx}_Name`, nameVal);
   safeSetText(form, `Nom_Nominee${idx}_DD`, ddVal);
   safeSetText(form, `Nom_Nominee${idx}_MM`, mmVal);
@@ -735,7 +735,7 @@ async function fillPDF(){
   });
 
 
-  // Signing Details - Section C 
+  // Section C - Signing Details - FillPDF 
   safeSetText(form, "Nom_Nominee_SignState", $("Nom_Nominee_SignState").value);
   safeSetText(form, "Nom_Nominee_SignDay", $("Nom_Nominee_SignDay").value);
   safeSetText(form, "Nom_Nominee_SignMonth", $("Nom_Nominee_SignMonth").value);
@@ -756,7 +756,7 @@ async function fillPDF(){
     const pageIndex = Math.min(3, pages.length - 1); // Page 4 (index 3); adjust if needed
     const page = pages[pageIndex];
 
-// Owner signature
+// Owner signature FillPDF
 const sigOwner = localStorage.getItem("sig_owner");
 if (sigOwner) {
   try {
@@ -789,7 +789,7 @@ if (sigOwner) {
   }
 }
 
-// Witness signature
+// Witness signature FillPDF
 const sigWitness = localStorage.getItem("sig_witness");
 if (sigWitness) {
   try {
@@ -823,7 +823,7 @@ if (sigWitness) {
 }
 
 
-// Trustee signature
+// Trustee signature FillPDF
 const sigTrustee = localStorage.getItem("sig_trustee");
 if (sigTrustee) {
   try {
@@ -859,7 +859,7 @@ if (sigTrustee) {
     // Flatten form fields before saving
     form.flatten();
     
-    // Save & download
+    // Save & download FillPDF
     const pdfBytes = await pdfDoc.save();
     const blob = new Blob([pdfBytes], { type: "application/pdf" });
     const url = URL.createObjectURL(blob);
@@ -898,13 +898,6 @@ function resetAll(){
       localStorage.removeItem(k);
     }
   });
-
-  document.querySelectorAll("input").forEach(inp=>{
-    if (inp.type === "checkbox" || inp.type === "radio") inp.checked = false;
-    else inp.value = "";
-    if(inp.id === "Onetimecharge_amt") inp.disabled = true;
-  });
-  document.querySelectorAll("select").forEach(s=> s.selectedIndex = 0);
 
   // Clear signature previews
   $("preview_owner").innerHTML = `<span>Tap to Sign (Owner)</span>`;
