@@ -383,7 +383,10 @@ function createNomineeEntry(index){
       <select id="Nom_Nominee${index}_Relationship"><option value="">-- CHOOSE --</option>${relationshipOptionsHTML()}</select>
     </label>
     <label>Percentage of Share (%)
-      <input type="number" id="Nom_Nominee${index}_Share" max="100">
+      <label>Percentage of Share (%)
+  <input type="number" id="Nom_Nominee${index}_Share" min="0" max="100" **step="1"**>
+</label>
+
     </label>
 
     <!-- UI CONDITION 1: Correspondence Address -->
