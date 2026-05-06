@@ -33,6 +33,17 @@
   .nominee .remove-btn{background:transparent;border:1px solid var(--line);color:#333;border-radius:8px;padding:6px 10px;font-size:0.9rem}
   .nominee .remove-btn:hover{border-color:#d0d0d7}
 
+  /* Styling for locked/copied fields */
+input[readonly] {
+  background: #f2f2f2;
+  color: #555;
+  cursor: not-allowed;
+  border: 1px solid #ddd; 
+  outline: none;          
+  /* Optional: slightly dim the opacity for a more 'disabled' look */
+  opacity: 0.8;
+}
+
   /* Signature preview tiles */
   .sig-preview{
     width:100%; height:150px; border:1px dashed #bbb; border-radius:10px;
@@ -164,6 +175,13 @@
   <!-- SECTION: Owner/Policyowner Signature -->
   <section class="section">
   <h3>Policy Owner Signature</h3>
+
+  <div class="row">
+      <label>
+      <input type="checkbox" id="same_as_insured"> Policyowner is same as Insured
+      </label>
+    </div>
+    
   <div class="row">
     <label style="flex:1">Policy Owner's Name
     <input id="Nom_Nominee_PolicyOwner_Name" type="text">
@@ -513,6 +531,23 @@ if (nomineeCount === 0) {
 }
 
 addNomineeBtn.disabled = nomineeCount >= MAX_NOMINEES;
+
+// AUTO FILL INSURED NAME
+document.getElementById('same_as_insured').addEventListener('change', function() {
+    const insuredName = document.getElementById('Nom_InsuredName');
+    const poName = document.getElementById('Nom_Nominee_PolicyOwner_Name');
+
+    if (this.checked) {
+        poName.value = insuredName.value;
+        poName.readOnly = true;
+    } else {
+        poName.value = "";
+        poName.readOnly = false;
+    }
+
+    // Force the persistence script to save the changes (even the cleared ones)
+    poName.dispatchEvent(new Event('input', { bubbles: true }));
+});
 
 /* ---------- SIGNATURE MODAL LOGIC (Owner + Payor) with HiDPI scaling ---------- */
 let sigTarget = null;
