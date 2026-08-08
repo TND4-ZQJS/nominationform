@@ -468,8 +468,7 @@ a.back-link svg {margin-left: -6px;transform: translateY(0.5px);stroke: #007aff 
 
 </div><!-- (END) STEP 3: Nominee -->  
 
-<!-- STEP 3: Sign -->
-
+<!-- STEP 4: Sign -->
 <div class="wizard-step">         
 <section class="section">
 
@@ -533,12 +532,13 @@ a.back-link svg {margin-left: -6px;transform: translateY(0.5px);stroke: #007aff 
 </div>     
 
   <!-- Tap-to-sign previews (Owner) -->
-  <div class="sig-preview" id="preview_owner" onclick="openSig('owner')">
-    <span>Tap to Sign (Policy Owner)</span>
-  </div>
-  <div class="row">
-    <button id="clearPreviewOwner" class="secondary" type="button">Clear Signature</button>
-  </div>
+  <div class="sig-preview" data-sig-preview>
+      <span>Tap to Sign (Policy Owner)</span>
+    </div>
+    <div class="row">
+      <button class="secondary" type="button" data-sig-clear>Clear Signature</button>
+    </div>
+      
   </section>
 
     <!-- SECTION: Witness Signature -->
@@ -550,15 +550,13 @@ a.back-link svg {margin-left: -6px;transform: translateY(0.5px);stroke: #007aff 
     <span id="Nom_Sign_Witness_Name_Display" style="font-weight: 600;">-</span>
   </label>
 </div>      
-  
-
-  <!-- Tap-to-sign previews (Witness) -->
-  <div class="sig-preview" id="preview_witness" onclick="openSig('witness')">
-    <span>Tap to Sign (Witness)</span>
-  </div>  
-  <div class="row">
-    <button id="clearPreviewWitness" class="secondary" type="button">Clear Signature</button>
-  </div>
+    <div class="sig-preview" data-sig-preview>
+      <span>Tap to Sign (Witness)</span>
+    </div>  
+    <div class="row">
+      <button class="secondary" type="button" data-sig-clear>Clear Signature</button>
+    </div>
+      
   </section>
 
      <!-- SECTION: Trustee Signature -->
@@ -571,17 +569,17 @@ a.back-link svg {margin-left: -6px;transform: translateY(0.5px);stroke: #007aff 
   </label>
 </div>    
 
-  <!-- Tap-to-sign previews (Trustee) -->
-  <div class="sig-preview" id="preview_trustee" onclick="openSig('trustee')">
-    <span>Tap to Sign (Trustee)</span>
-  </div>  
-  <div class="row">
-    <button id="clearPreviewTrustee" class="secondary" type="button">Clear Signature</button>
-  </div>
+<div class="sig-preview" data-sig-preview>
+      <span>Tap to Sign (Trustee)</span>
+    </div>  
+    <div class="row">
+      <button class="secondary" type="button" data-sig-clear>Clear Signature</button>
+    </div>
   </section>
-</div>  
+    
+</div> <!-- (END) STEP 4: Sign -->  
 
-<div class="wizard-step"><!-- Step 4: Generate -->
+<div class="wizard-step"><!-- Step 5: Generate -->
 <section class="section">
   <h2>Generate PDF / Reset Form</h2>
   <div class="action-center">
@@ -606,7 +604,7 @@ a.back-link svg {margin-left: -6px;transform: translateY(0.5px);stroke: #007aff 
 
   </div> <!-- Close action-center -->
 </section>
-</div><!-- (END) STEP 7: Generate -->
+</div><!-- (END) STEP 5: Generate -->
 
    <!-- NAVIGATION BUTTONS -->
     <div class="wizard-actions">
@@ -644,10 +642,11 @@ a.back-link svg {margin-left: -6px;transform: translateY(0.5px);stroke: #007aff 
 <div id="saveStatus">Saved</div>
 
 <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.2.0/dist/signature_pad.umd.min.js"></script>    
 <script>
 /* ---------- CONFIG ---------- */
 const PDF_FILENAME = "Nomination and Trustees_LF4056_LF4054_fillable.pdf";
+const FORM_ID = "Nom";    
 const MAX_NOMINEES = 5;
 
 /* ---------- helpers ---------- */
@@ -1031,144 +1030,176 @@ function saveToLocalStorage(id, value) {
   }
 }
 
-/* ---------- SIGNATURE MODAL LOGIC (Owner + Payor) with HiDPI scaling ---------- */
+/* ---------- Signature Engine ---------- */
 let sigTarget = null;
 const sigModal = $("sigModal");
 const sigCanvas = $("sigCanvas");
-const sigCtx = sigCanvas.getContext("2d");
-let drawing = false;
-let scaleX = 1, scaleY = 1;
+const sigCtx = sigCanvas ? sigCanvas.getContext("2d") : null;
 
-/* Resize canvas to look crisp on any screen size & DPR */
-function resizeSigCanvas(){
-  const dpr = window.devicePixelRatio || 1;
-  const cssWidth = sigCanvas.clientWidth || sigCanvas.parentElement.clientWidth || 560;
-  const cssHeight = sigCanvas.clientHeight || 220;
-  sigCanvas.width = Math.max(1, Math.floor(cssWidth * dpr));
-  sigCanvas.height = Math.max(1, Math.floor(cssHeight * dpr));
-  sigCtx.setTransform(1,0,0,1,0,0); // reset
-  sigCtx.scale(dpr, dpr);
-  sigCtx.lineWidth = 2;
-  sigCtx.lineCap = "round";
-  sigCtx.strokeStyle = "#000";
-  scaleX = sigCanvas.width / (sigCanvas.getBoundingClientRect().width || cssWidth);
-  scaleY = sigCanvas.height / (sigCanvas.getBoundingClientRect().height || cssHeight);
-  // White background (prevents transparent PNG on PDFs)
-  //sigCtx.fillStyle = "#fff";
-  //sigCtx.fillRect(0,0,sigCanvas.width/scaleX, sigCanvas.height/scaleY);
+// Initialize SignaturePad
+const signaturePad = new SignaturePad(sigCanvas, {
+  minWidth: 0.7,
+  maxWidth: 2.5,
+  penColor: "black",
+  backgroundColor: "rgba(0,0,0,0)"
+});
+
+function resizeCanvas() {
+  if (!sigCanvas) return;
+  const ratio = Math.max(window.devicePixelRatio || 1, 1);
+  const formId = typeof FORM_ID !== "undefined" ? FORM_ID : "Nom";
+  const storageKey = sigTarget ? `sig_${formId}_${sigTarget}` : null;
+  const savedFromStorage = storageKey ? localStorage.getItem(storageKey) : null;
+
+  sigCanvas.width = sigCanvas.offsetWidth * ratio;
+  sigCanvas.height = sigCanvas.offsetHeight * ratio;
+  sigCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+  signaturePad.clear();
+
+  if (savedFromStorage) {
+    const img = new Image();
+    img.onload = () => sigCtx.drawImage(img, 0, 0, sigCanvas.offsetWidth, sigCanvas.offsetHeight);
+    img.src = savedFromStorage;
+  }
 }
 
-function openSig(target){
-  sigTarget = target; // 'owner' | 'witness' | 'trustee'
-
-if (target === 'owner') {
-  $("sigModalTitle").textContent = "Sign: Policy Owner";
-} else if (target === 'witness') {
-  $("sigModalTitle").textContent = "Sign: Witness";
-} else if (target === 'trustee') {
-  $("sigModalTitle").textContent = "Sign: Trustee";
-}
-
-  sigModal.style.display = "block";
-  sigModal.setAttribute("aria-hidden", "false");
-
-  // Next frame: ensure layout settled then resize canvas
-  requestAnimationFrame(()=>{
-    resizeSigCanvas();
-    // If there is an existing signature, draw it to current canvas size
-    const existing = localStorage.getItem("sig_"+target);
-    if (existing){
-      const img = new Image();
-      img.onload = ()=>{
-        // cover the canvas area with existing image
-        sigCtx.drawImage(img, 0, 0, sigCanvas.width/scaleX, sigCanvas.height/scaleY);
-      };
-      img.src = existing;
-    }
+function openSig({ role, title }) {
+  sigTarget = role;
+  if ($("sigModalTitle")) $("sigModalTitle").textContent = title || `Sign: ${role}`;
+  
+  if (sigModal) {
+    sigModal.style.display = "block";
+    sigModal.setAttribute("aria-hidden", "false");
+  }
+  
+  requestAnimationFrame(() => {
+    resizeCanvas();
   });
 }
-$("sigClear").addEventListener("click", ()=>{
-  sigCtx.clearRect(0,0,sigCanvas.width, sigCanvas.height);
-  // Repaint white bg in CSS pixels
-  //sigCtx.fillStyle="#fff"; sigCtx.fillRect(0,0,sigCanvas.width/scaleX, sigCanvas.height/scaleY);
-});
-$("sigCancel").addEventListener("click", closeSigModal);
-function closeSigModal(){
-  sigModal.style.display = "none";
-  sigModal.setAttribute("aria-hidden", "true");
+
+function closeSigModal() {
+  if (sigModal) {
+    sigModal.style.display = "none";
+    sigModal.setAttribute("aria-hidden", "true");
+  }
   sigTarget = null;
 }
-$("sigDone").addEventListener("click", ()=>{
-  if(!sigTarget) return;
+
+// Modal Action Handlers
+$("sigDone")?.addEventListener("click", () => {
+  if (!sigTarget || signaturePad.isEmpty()) return;
+
+  const formId = typeof FORM_ID !== "undefined" ? FORM_ID : "Nom";
   const dataURL = sigCanvas.toDataURL("image/png");
-  localStorage.setItem("sig_"+sigTarget, dataURL);
-  const preview = $("preview_"+sigTarget);
-  preview.innerHTML = `<img alt="Signature ${sigTarget}" src="${dataURL}">`;
+  
+  localStorage.setItem(`sig_${formId}_${sigTarget}`, dataURL);
+  
+  const block = document.querySelector(`[data-sig-role="${sigTarget}"]`);
+  const previewDiv = block?.querySelector("[data-sig-preview]");
+  if (previewDiv) {
+    previewDiv.innerHTML = `<img src="${dataURL}" style="max-height:100%; width:auto; pointer-events:none;" alt="Signature ${sigTarget}">`;
+  }
   closeSigModal();
 });
 
-/* Drawing (mouse + touch) with coordinate conversion */
-function getPos(e){
-  const rect = sigCanvas.getBoundingClientRect();
-  if(e.touches && e.touches[0]){
-    return { x: (e.touches[0].clientX - rect.left), y: (e.touches[0].clientY - rect.top) };
-  }
-  return { x: (e.clientX - rect.left), y: (e.clientY - rect.top) };
-}
-function startDraw(e){
-  drawing = true;
-  sigCtx.beginPath();
-  const {x,y}=getPos(e);
-  sigCtx.moveTo(x, y);
-  e.preventDefault?.();
-}
-function endDraw(){ drawing = false; sigCtx.beginPath(); }
-function moveDraw(e){
-  if(!drawing) return;
-  const {x,y} = getPos(e);
-  sigCtx.lineTo(x, y);
-  sigCtx.stroke();
-  sigCtx.beginPath();
-  sigCtx.moveTo(x, y);
-  e.preventDefault?.();
-}
-sigCanvas.addEventListener("mousedown", startDraw);
-sigCanvas.addEventListener("mousemove", moveDraw);
-window.addEventListener("mouseup", endDraw);
-sigCanvas.addEventListener("touchstart", startDraw, {passive:false});
-sigCanvas.addEventListener("touchmove", moveDraw, {passive:false});
-sigCanvas.addEventListener("touchend", endDraw);
-window.addEventListener("resize", ()=> {
-  // Only resize when modal is open to avoid reflow glitches
-  if(sigModal.getAttribute("aria-hidden")==="false"){ 
-    const img = new Image();
-    img.onload = ()=>{
-      resizeSigCanvas();
-      sigCtx.drawImage(img, 0, 0, sigCanvas.width/scaleX, sigCanvas.height/scaleY);
-    };
-    img.src = sigCanvas.toDataURL("image/png");
-  }
-});
+$("sigClear")?.addEventListener("click", () => signaturePad.clear());
+$("sigCancel")?.addEventListener("click", closeSigModal);
+window.addEventListener("resize", resizeCanvas);
 
-/* Clear preview buttons + restore previews on load */
-$("clearPreviewOwner").addEventListener("click", ()=>{
-  localStorage.removeItem("sig_owner");
-  $("preview_owner").innerHTML = `<span>Tap to Sign (Owner)</span>`;
-});
-$("clearPreviewWitness").addEventListener("click", ()=>{
-  localStorage.removeItem("sig_witness");
-  $("preview_witness").innerHTML = `<span>Tap to Sign (Witness)</span>`;
-});
-$("clearPreviewTrustee").addEventListener("click", ()=>{
-  localStorage.removeItem("sig_trustee");
-  $("preview_trustee").innerHTML = `<span>Tap to Sign (Trustee)</span>`;
-});
-window.addEventListener("DOMContentLoaded", ()=>{
-  ["owner","witness","trustee"].forEach(role=>{
-    const saved = localStorage.getItem("sig_"+role);
-    if(saved){ $("preview_"+role).innerHTML = `<img alt="Signature ${role}" src="${saved}">`; }
+/* ---------- Initialize Signature Fields ---------- */
+function initSignatureFields() {
+  const formId = typeof FORM_ID !== "undefined" ? FORM_ID : "Nom";
+
+  document.querySelectorAll("[data-sig-role]").forEach((block) => {
+    const role = block.dataset.sigRole;
+    const title = block.dataset.sigTitle || `Sign: ${role}`;
+    const previewEl = block.querySelector("[data-sig-preview]");
+    const clearBtn = block.querySelector("[data-sig-clear]");
+    const defaultText = `<span>Tap to Sign (${role.charAt(0).toUpperCase() + role.slice(1)})</span>`;
+
+    if (previewEl) {
+      previewEl.style.cursor = "pointer";
+      previewEl.addEventListener("click", (e) => {
+        e.preventDefault();
+        openSig({ role, title });
+      });
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        localStorage.removeItem(`sig_${formId}_${role}`);
+        if (previewEl) previewEl.innerHTML = defaultText;
+      });
+    }
+
+    const saved = localStorage.getItem(`sig_${formId}_${role}`) || localStorage.getItem(`sig_${role}`);
+    if (saved && previewEl) {
+      previewEl.innerHTML = `<img src="${saved}" style="max-height:100%; width:auto; pointer-events:none;" alt="Signature ${role}">`;
+    }
   });
-});
+}
+
+/* ---------- PDF Embedding Engine ---------- */
+async function embedSignatureToPdf(pdfDoc, pageIndex, options) {
+  const { role, x, y, factor = 0.40 } = options;
+
+  const formId = typeof FORM_ID !== "undefined" ? FORM_ID : "Nom";
+  const primaryKey = `sig_${formId}_${role}`;
+  
+  let sigDataUri = localStorage.getItem(primaryKey) 
+                || localStorage.getItem(`sig_${role}`) 
+                || localStorage.getItem(role);
+
+  if (!sigDataUri || !sigDataUri.startsWith("data:image/png")) {
+    console.warn(`No valid PNG signature found for role: ${role} (key tried: ${primaryKey})`);
+    return;
+  }
+
+  try {
+    const img = await pdfDoc.embedPng(sigDataUri);
+    const originalSize = img.size();
+
+    const baseWidth = 250;
+    const aspectRatio = originalSize.width / originalSize.height;
+    const renderWidth = baseWidth * factor;
+    const renderHeight = (baseWidth / aspectRatio) * factor;
+
+    const pages = pdfDoc.getPages();
+    const targetPage = pages[pageIndex];
+
+    if (targetPage) {
+      targetPage.drawImage(img, {
+        x: x,
+        y: y,
+        width: renderWidth,
+        height: renderHeight
+      });
+    } else {
+      console.error(`Page index ${pageIndex} does not exist in the PDF template.`);
+    }
+  } catch (err) {
+    console.error(`Error embedding signature for role ${role}:`, err);
+  }
+}
+
+/* ---------- AUTO INITIALIZE BOTH ON LOAD ---------- */
+function initApp() {
+  if (typeof loadFromLocalStorage === "function") {
+    loadFromLocalStorage();
+  }
+  if (typeof initSignatureFields === "function") {
+    initSignatureFields();
+  }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initApp);
+} else {
+  initApp();
+}
+/* ---------- (END) Signature Engine ---------- */    
 
 
 /* ---------- Generate PDF ---------- */
@@ -1289,110 +1320,13 @@ async function fillPDF(templateFileName, action = 'download') {
   safeSetText(form, "Nom_Nominee_Witness_Mobile", $("Nom_Nominee_Witness_Mobile").value);
 
 
-    /* --------- SIGNATURE IMAGE EMBEDDING (embedPng + drawImage) --------- */
-    const pages = pdfDoc.getPages();
-    const pageIndex = Math.min(3, pages.length - 1); // Page 4 (index 3); adjust if needed
-    const page = pages[pageIndex];
+   // Embed Signatures (Note: 0-indexed page numbering)
+    // For Page 1 use 0, Page 2 use 1, Page 3 use 2
+    const targetPageIndex = 3; // Adjust this index to match the target page in your PDF template
 
-// Owner signature FillPDF
-const sigOwner = localStorage.getItem("sig_owner");
-if (sigOwner) {
-  try {
-    const imgOwner = await pdfDoc.embedPng(sigOwner);
-    const { width, height } = imgOwner.size();
-
-    const previewEl = document.getElementById("preview_owner");
-    const boxW = previewEl.offsetWidth;
-    const boxH = previewEl.offsetHeight;
-
-    const scale = Math.min(boxW / width, boxH / height);
-    let drawW = width * scale;
-    let drawH = height * scale;
-
-    const factor = 0.40;    // 40% scale
-    const posX = 50;         // X position on PDF
-    const posY = 240;        // Y position on PDF
-
-    drawW *= factor;
-    drawH *= factor;
-
-    page.drawImage(imgOwner, {
-      x: posX,
-      y: posY,
-      width: drawW,
-      height: drawH
-    });
-  } catch (e) {
-    console.error(e);
-  }
-}
-
-// Witness signature FillPDF
-const sigWitness = localStorage.getItem("sig_witness");
-if (sigWitness) {
-  try {
-    const imgWitness = await pdfDoc.embedPng(sigWitness);
-    const { width, height } = imgWitness.size();
-
-    const previewEl = document.getElementById("preview_witness");
-    const boxW = previewEl.offsetWidth;
-    const boxH = previewEl.offsetHeight;
-
-    const scale = Math.min(boxW / width, boxH / height);
-    let drawW = width * scale;
-    let drawH = height * scale;
-
-    const factor = 0.40;    // 45% scale
-    const posX = 420;         // X position on PDF
-    const posY = 240;        // Y position on PDF
-
-    drawW *= factor;
-    drawH *= factor;
-
-    page.drawImage(imgWitness, {
-      x: posX,
-      y: posY,
-      width: drawW,
-      height: drawH
-    });
-  } catch (e) {
-    console.error(e);
-  }
-}
-
-
-// Trustee signature FillPDF
-const sigTrustee = localStorage.getItem("sig_trustee");
-if (sigTrustee) {
-  try {
-    const imgTrustee = await pdfDoc.embedPng(sigTrustee);
-    const { width, height } = imgTrustee.size();
-
-    const previewEl = document.getElementById("preview_trustee");
-    const boxW = previewEl.offsetWidth;
-    const boxH = previewEl.offsetHeight;
-
-    const scale = Math.min(boxW / width, boxH / height);
-    let drawW = width * scale;
-    let drawH = height * scale;
-
-    const factor = 0.40;    // 45% scale
-    const posX = 240;         // X position on PDF
-    const posY = 240;        // Y position on PDF
-
-    drawW *= factor;
-    drawH *= factor;
-
-    page.drawImage(imgTrustee, {
-      x: posX,
-      y: posY,
-      width: drawW,
-      height: drawH
-    });
-  } catch (e) {
-    console.error(e);
-  }
-}
+    await embedSignatureToPdf(pdfDoc, targetPageIndex, { role: "owner",   x: 50,  y: 620, factor: 0.50 });
+    await embedSignatureToPdf(pdfDoc, targetPageIndex, { role: "trustee", x: 240, y: 620, factor: 0.50 });
+    await embedSignatureToPdf(pdfDoc, targetPageIndex, { role: "witness", x: 420, y: 620, factor: 0.50 });
     
     // Flatten form fields before saving
     //form.flatten();
