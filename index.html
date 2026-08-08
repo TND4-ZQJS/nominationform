@@ -354,21 +354,30 @@ a.back-link svg {margin-left: -6px;transform: translateY(0.5px);stroke: #007aff 
 
         <div class="step-indicator" id="stepIndicator">
     <div class="step active"><span class="step-num">1</span>Policy</div>
-    <div class="step"><span class="step-num">2</span>Nominee</div>
-    <div class="step"><span class="step-num">3</span>Sign</div>
-    <div class="step"><span class="step-num">4</span>Generate</div>        
+    <div class="step"><span class="step-num">2</span>Person</div>        
+    <div class="step"><span class="step-num">3</span>Nominee</div>
+    <div class="step"><span class="step-num">4</span>Sign</div>
+    <div class="step"><span class="step-num">5</span>Generate</div>        
   </div>  
         
    <!-- STEP 1: Policy -->
     <div class="wizard-step active">     
    <section class="section" id="sectionA">
-    <h3>Policy Details</h3>
+    <h2>Policy Details</h2>
 
     <div class="row">
-    <label>Policy No.
+    <label style="flex:1">Policy No.
       <input id="Nom_PolicyNumber" type="text" placeholder="Enter Policy No.">
     </label>
+    </div>
+   </section>
 
+    </div> <!-- (END) STEP 1: Policy -->    
+
+  <!-- STEP 2: Person -->
+  <div class="wizard-step">       
+    <section class="section">    
+    <div class="row">
     <label>Proposed Life Insured / Insured
       <input id="Nom_InsuredName" type="text" placeholder="Enter Name">
     </label>
@@ -391,11 +400,63 @@ a.back-link svg {margin-left: -6px;transform: translateY(0.5px);stroke: #007aff 
       <label class="inline"><input name="Religion" id="Nom_Religion_NonMuslim" type="radio">Non-Muslim</label>
     </div>
       </section>
+    </section>
 
-  </section>
+  <section class="section">
+  <h3>Policy Owner Details</h3>
+
+  <div class="row">
+      <label>
+      <input type="checkbox" id="same_as_insured"> Policyowner is same as Insured
+      </label>
     </div>
+    
+  <div class="row">
+    <label style="flex:1">Policy Owner's Name
+    <input id="Nom_Nominee_PolicyOwner_Name" type="text">
+  </label>
+  </div>
+    <div class="row">
+    <label style="flex:1">NIRC/Passport No.
+      <input id="Nom_Nominee_PolicyOwner_NRIC" type="text">
+    </label>
+  </div>  
+  </section>
 
-  <!-- STEP 2: Nominee -->
+ <section class="section">
+  <h3>Witness Details</h3>
+  <div class="row">
+    <label style="flex:1">Witness' Name
+    <input id="Nom_Nominee_Witness_Name" type="text">
+  </label>
+  </div>
+  <div class="row">
+    <label style="flex:1">NIRC/Passport No.
+      <input id="Nom_Nominee_Witness_NIRC" type="text">
+    </label>
+    <label style="flex:1">Mobile
+      <input id="Nom_Nominee_Witness_Mobile" type="text">
+    </label>
+  </div>         
+ </section>
+
+  <section class="section">    
+   <h3>Trustee Details</h3>
+  <div class="row">
+    <label style="flex:1">Trustee's Name
+    <input id="Nom_Nominee_Trustee_Name" type="text">
+  </label>
+  </div>
+    <div class="row">
+    <label style="flex:1">NIRC/Passport No.
+      <input id="Nom_Nominee_Trustee_NIRC" type="text">
+    </label>
+  </div>     
+  </section>    
+
+  </div><!-- (END) STEP 2: Person -->
+        
+  <!-- STEP 3: Nominee -->
 <div class="wizard-step">      
     <div id="nomineesContainer" class="nominee-grid"></div>
     <div class="row">
@@ -403,7 +464,7 @@ a.back-link svg {margin-left: -6px;transform: translateY(0.5px);stroke: #007aff 
       <small class="muted">Up to 5 Nominees</small>
     </div>
 
-</div>  
+</div><!-- (END) STEP 3: Nominee -->  
 
 <!-- STEP 3: Sign -->
 
@@ -463,23 +524,6 @@ a.back-link svg {margin-left: -6px;transform: translateY(0.5px);stroke: #007aff 
   <section class="section">
   <h3>Policy Owner Signature</h3>
 
-  <div class="row">
-      <label>
-      <input type="checkbox" id="same_as_insured"> Policyowner is same as Insured
-      </label>
-    </div>
-    
-  <div class="row">
-    <label style="flex:1">Policy Owner's Name
-    <input id="Nom_Nominee_PolicyOwner_Name" type="text">
-  </label>
-  </div>
-    <div class="row">
-    <label style="flex:1">NIRC/Passport No.
-      <input id="Nom_Nominee_PolicyOwner_NRIC" type="text">
-    </label>
-  </div>
-
   <!-- Tap-to-sign previews (Owner) -->
   <div class="sig-preview" id="preview_owner" onclick="openSig('owner')">
     <span>Tap to Sign (Policy Owner)</span>
@@ -492,19 +536,6 @@ a.back-link svg {margin-left: -6px;transform: translateY(0.5px);stroke: #007aff 
     <!-- SECTION: Witness Signature -->
   <section class="section">
   <h3>Witness Signature</h3>
-  <div class="row">
-    <label style="flex:1">Witness' Name
-    <input id="Nom_Nominee_Witness_Name" type="text">
-  </label>
-  </div>
-  <div class="row">
-    <label style="flex:1">NIRC/Passport No.
-      <input id="Nom_Nominee_Witness_NIRC" type="text">
-    </label>
-    <label style="flex:1">Mobile
-      <input id="Nom_Nominee_Witness_Mobile" type="text">
-    </label>
-  </div>    
 
   <!-- Tap-to-sign previews (Witness) -->
   <div class="sig-preview" id="preview_witness" onclick="openSig('witness')">
@@ -518,16 +549,6 @@ a.back-link svg {margin-left: -6px;transform: translateY(0.5px);stroke: #007aff 
      <!-- SECTION: Trustee Signature -->
   <section class="section">
   <h3>Trustee Signature</h3>
-  <div class="row">
-    <label style="flex:1">Trustee's Name
-    <input id="Nom_Nominee_Trustee_Name" type="text">
-  </label>
-  </div>
-    <div class="row">
-    <label style="flex:1">NIRC/Passport No.
-      <input id="Nom_Nominee_Trustee_NIRC" type="text">
-    </label>
-  </div>
 
   <!-- Tap-to-sign previews (Trustee) -->
   <div class="sig-preview" id="preview_trustee" onclick="openSig('trustee')">
