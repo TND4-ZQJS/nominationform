@@ -1403,12 +1403,16 @@ function resetAllData() {
   nomineesContainer.appendChild(createNomineeEntry(1));
   addNomineeBtn.disabled = false;
 
-  // 4) Reset signature previews
-  $("preview_owner").innerHTML   = `<span>Tap to Sign (Policy Owner)</span>`;
-  $("preview_witness").innerHTML = `<span>Tap to Sign (Witness)</span>`;
-  $("preview_trustee").innerHTML = `<span>Tap to Sign (Trustee)</span>`;
+  // 4) Reset Signature Previews
+  document.querySelectorAll("[data-sig-role]").forEach(block => {
+    const role = block.dataset.sigRole;
+    const previewEl = block.querySelector("[data-sig-preview]");
+    if (previewEl) {
+      previewEl.innerHTML = `<span>Tap to Sign (${role.charAt(0).toUpperCase() + role.slice(1)})</span>`;
+    }
+  });
 
-  showSaveStatus();
+  if (typeof showSaveStatus === "function") showSaveStatus();
 }
 
 /* ---------- WIZARD TRACKER LOGIC ---------- */
