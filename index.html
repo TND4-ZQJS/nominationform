@@ -1,18 +1,203 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<title>Nomination Form</title>
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CI Pro Universe | Magic Filler</title>
 <style>
-  :root{
-    --bg:#f6f7f9; --card:#fff; --accent:#007aff; --muted:#666; --line:#e9e9ee;
-  }
-  *{box-sizing:border-box}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;margin:18px;background:var(--bg);color:#111}
-  main{max-width:980px;margin:0 auto;background:var(--card);padding:18px;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,0.06)}
-  h1{margin:15px 0 35px 0;font-size:1.50rem}
-  .section{background:#fbfbfd;border:1px solid #eee;padding:14px;border-radius:10px;margin:12px 0}
+/* ============================================================
+   GLOBAL DESIGN VARIABLES (Unified Workspace Framework)
+   ============================================================ */
+*, *::before, *::after { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+}
+
+:root {
+    --nav-height: 52px;
+    --accent: #0071e3;
+    --bg: #f5f5f7;       /* Clean gray workspace canvas background */
+    --surface: #ffffff;  /* Card surface background */
+    --text-primary: #1d1d1f;
+    --text-secondary: #515154;
+    --text-tertiary: #86868b;
+    --border: rgba(0, 0, 0, 0.06);
+    --line: #e9e9ee;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 940px;
+    margin: 40px auto;
+    padding: 0 24px 20px;
+}
+
+/* ============================================================
+   STICKY STYLISH NAVBAR STRUCTURE
+   ============================================================ */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    height: var(--nav-height);
+}
+
+.nav-container {
+    max-width: 940px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.logo {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    cursor: pointer;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+}
+
+.nav-menu {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    margin-left: auto;
+}
+
+.nav-item {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+}
+
+.nav-item:hover { 
+    background: rgba(0,0,0,0.05); 
+    color: var(--text-primary); 
+}
+
+.nav-item.active { 
+    background: rgba(0,113,227,0.08); 
+    color: var(--accent); 
+}
+
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 6px;
+}
+
+.menu-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: 2px;
+    transition: 0.3s;
+}
+
+@media (max-width: 700px) {
+    .menu-toggle { display: flex; }
+    .nav-menu {
+        display: none;
+        position: absolute;
+        top: var(--nav-height);
+        left: 0; right: 0;
+        background: rgba(255,255,255,0.97);
+        backdrop-filter: blur(20px);
+        flex-direction: column;
+        padding: 12px 16px 20px;
+        gap: 2px;
+        border-bottom: 1px solid var(--border);
+    }
+    .nav-menu.show { display: flex; }
+    .nav-item { width: 100%; padding: 10px 14px; }
+}
+
+/* Security Box */
+.security {
+    margin-bottom: 24px;
+}
+
+.security-box {
+    background-color: transparent;
+    border-left: 3px solid #86868b;
+    padding: 16px 24px;
+    font-size: 14px;
+    color: #6e6e73;
+}    
+
+/* Footer */
+.footer {
+    padding: 20px 24px 40px 24px;
+    text-align: center;
+    font-size: 12px;
+    color: #86868b;
+    border-top: 1px solid #e8e8ed;
+}    
+
+/* Hero Section */
+.hero {
+    padding-top: 140px;
+    padding-bottom: 80px;
+    text-align: center;
+}
+
+.badge {
+    font-size: 20px;
+    font-weight: 600;
+    color: #bf4800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 12px;
+}
+
+.hero h1 {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    color: #1d1d1f;
+}
+
+.subtitle {
+    font-size: 19px;
+    color: #86868b;
+    max-width: 640px;
+    margin: 0 auto;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+}    
+
+/* ============================================================
+   FILLER WORKSPACE COMPONENT STYLES
+   ============================================================ */
+.section{background:#fbfbfd;border:1px solid #eee;padding:14px;border-radius:10px;margin:12px 0}
   .section h2{margin:0 0 10px 0;font-size:1.05rem}
   label{display:block;margin:8px 0;font-size:0.95rem}
   input[type=text],input[type=email],input[type=number],input[type=tel],select,textarea{
@@ -20,29 +205,60 @@
   }
   .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:8px 0}
   .muted{color:var(--muted);font-size:0.85rem}
-  button{background:var(--accent);color:#fff;border:0;padding:10px 14px;border-radius:10px;cursor:pointer}
-  button.secondary{background:#999}
-  button.ghost{background:transparent;border:1px solid var(--line);color:#333}
-  .actions{display:flex;gap:12px;align-items:center}
+button {background: var(--accent);color: #fff;border: 0;padding: 10px 16px;border-radius: 10px;cursor: pointer;font-weight: 500;font-size: 0.95rem;transition: background 0.15s;}
+button:hover {background: #0077ed;}
+button.secondary { background: #999; }
+button.ghost { background: transparent; border: 1px solid var(--line); color: #333; }
+button.ghost:hover { background: rgba(0,0,0,0.02); }
+.actions { display: flex; gap: 12px; align-items: center; }
 
 
   /* Nominee grid */
   .nominee-grid{display:grid;grid-template-columns:1fr;gap:12px}
   .nominee{background:#fff;padding:12px;border-radius:10px;border:1px solid #eee;position:relative}
-  .nominee h3{margin:0 0 8px 0;font-size:0.95rem;display:flex;align-items:center;justify-content:space-between}
+  .nominee h3{margin:0 0 8px 0;font-size:1.0rem;display:flex;align-items:center;justify-content:space-between}
   .nominee .remove-btn{background:transparent;border:1px solid var(--line);color:#333;border-radius:8px;padding:6px 10px;font-size:0.9rem}
   .nominee .remove-btn:hover{border-color:#d0d0d7}
 
-  /* Styling for locked/copied fields */
-input[readonly] {
-  background: #f2f2f2;
-  color: #555;
-  cursor: not-allowed;
-  border: 1px solid #ddd; 
-  outline: none;          
-  /* Optional: slightly dim the opacity for a more 'disabled' look */
-  opacity: 0.8;
-}
+  /* Generate PDF Page */
+  .action-center {max-width: 800px;margin: 40px auto;padding: 0 20px;box-sizing: border-box;}
+  .pdf-grid {display: flex;flex-direction: column;gap: 12px;}
+  .doc-row {display: flex;align-items: center;justify-content: space-between;background: #ffffff;padding: 16px;border-radius: 14px;border: 1px solid #d2d2d7box-sizing: border-box;}
+  .doc-info {display: flex;flex-direction: column;}
+  .doc-title {font-size: 15px; color: #1d1d1f;}
+  .doc-sub {font-size: 12px; color: #86868b;}
+
+ /* Generate PDF Button Styles - Fixed Font & Padding matching Parent */
+.btn-primary,
+.btn-secondary {font-family: inherit;font-size: 1rem;padding: 10px 18px;border-radius: 18px;font-weight: 500;cursor: pointer;box-sizing: border-box;}
+.btn-primary {background: #0071e3;color: #fff;border: none; }
+.btn-secondary {background: #f5f5f7;color: #0071e3;border: none;margin-right: 4px; }
+.btn-secondary:focus {outline: none;background: #f5f5f7;color: #0071e3;}
+.btn-secondary:hover {background: #ebebed;}
+.btn-secondary:active {background: #e8e8ed;transition: 0.1s;}
+.reset-container {text-align: center;margin-top: 40px;padding-top: 20px;border-top: 1px solid #d2d2d7;}
+.btn-reset {font-family: inherit;font-size: 1rem;background: none; color: #ff3b30; border: 1px solid #ff3b30; padding: 12px 24px; border-radius: 22px; font-weight: 600; cursor: pointer; transition: 0.2s; width: 100%; max-width: 300px; }
+
+/* MOBILE ALIGNMENT FIX */
+@media (max-width: 600px) {
+  .doc-row {flex-direction: column;align-items: flex-start;gap: 15px;}
+  .actions {width: 100%;display: flex;justify-content: space-between;}
+  .actions button {flex: 1;text-align: center;}
+}    
+
+  /* Wizard Steps Interface Tracker */
+.step-indicator { display: flex; justify-content: space-between; margin-bottom: 30px; background: #fff; padding: 15px; border-radius: 12px; border: 1px solid var(--line); overflow-x: auto; gap: 10px; }
+.step { flex: 1; text-align: center; font-size: 0.8rem; color: #888; cursor: pointer; transition: all 0.2s ease-in-out; padding: 8px; border-radius: 8px; min-width: 90px; display: flex; flex-direction: column; align-items: center; }
+.step:hover { background: #f0f7ff; color: var(--accent); }
+.step.active { color: var(--accent); font-weight: 600; background: #f0f7ff; }
+.step-num { width: 28px; height: 28px; line-height: 28px; border-radius: 50%; background: #eee; display: block; margin-bottom: 6px; font-size: 0.85rem; transition: background 0.3s; color: #333; }
+.step.active .step-num { background: var(--accent); color: #fff; }
+
+.wizard-step { display: none; background: var(--surface); padding: 12px; border-radius: 18px; border: 1px solid rgba(0,0,0,0.02); box-shadow: 0 4px 12px rgba(0,0,0,0.01); }
+.wizard-step.active { display: block; animation: slideIn 0.3s ease-out; }
+
+@keyframes slideIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+.wizard-actions { display: flex; justify-content: space-between; margin-top: 30px; padding: 20px 0; border-top: 1px solid var(--line); }  
 
   /* Signature preview tiles */
   .sig-preview{
@@ -63,10 +279,31 @@ input[readonly] {
   #sigCanvas{ width:100%; height:220px; background:#fff; border:1px solid #ddd; border-radius:10px; touch-action:none }
   .sig-actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:10px; }
 
-    /* XY% signature tuning  */
-   .hidden-inputs {display: none;}
+/* ============================================================
+    PREMIUM iOS BACK NAVIGATION ENGINE (Optimized)
+   ============================================================ */
+.back-navigation-container {max-width: 940px;margin: 20px auto 0 auto;padding: 0 24px;display: flex;align-items: center;}
+a.back-link,
+a.back-link span {text-decoration: none !important;text-decoration-line: none !important;border-bottom: none !important;box-shadow: none !important;outline: none !important;}
+a.back-link {display: inline-flex;align-items: center;gap: 2px;color:#007aff; 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+            font-size: 16px;font-weight: 400;letter-spacing: -0.3px;transition: opacity 0.15s ease;cursor: pointer;-webkit-user-select: none;user-select: none;}
+a.back-link:hover {opacity: 0.7;}
+a.back-link:active {opacity: 0.3;}
+a.back-link svg {margin-left: -6px;transform: translateY(0.5px);stroke: #007aff !important;fill: none; /* Ensures vector shapes don't accidentally bloat */}
 
-  
+   .btn-set-today {
+  margin-left: 8px;
+  padding: 4px 10px !important;
+  font-size: 0.75rem !important;
+  height: auto !important;
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+  background: transparent;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+} 
   /* Save indicator */
   #saveStatus{
     position:fixed; bottom:12px; right:12px; background:var(--accent); color:#fff;
@@ -76,13 +313,56 @@ input[readonly] {
   @media (max-width:900px){ .header-grid{grid-template-columns:1fr} .onetime-charge-options{grid-column: 1 / -1;} }
   @media (max-width:720px){ .policy-grid{grid-template-columns:1fr} .card-digit{width:60px} }
 </style>
+
 </head>
 <body>
-<main>
-  <h1>Nomination Form(LF4054)</h1>
 
-<section class="section" id="sectionA">
-    <h2>Section A - Policy Details</h2>
+    <!-- Global Navigation Header -->
+    <header class="navbar">
+        <div class="nav-container">
+            <span class="logo" onclick="window.location.href='dashboard.html'">CI Pro Universe</span>
+
+            <!-- JavaScript Mobile Opener Hook -->
+            <div class="menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </div>
+
+            <nav class="nav-menu" id="navMenu">
+                <a href="dashboard.html" class="nav-item">Operational Hub</a>
+                <a href="cipro-experience.html" class="nav-item">CI Pro Experience</a>
+                <a href="eposbuddy.html" class="nav-item">EPOS Buddy</a>
+                <a href="magicfiller.html" class="nav-item active">Magic Filler</a>
+            </nav>
+        </div>
+    </header>
+
+            <div class="back-navigation-container">
+    <a href="#" id="backToMainLink" class="back-link" aria-label="Go back to previous page" role="button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        <span>Back</span>
+    </a>
+</div>
+        
+
+    <main class="container">
+
+      <section class="hero" style="padding-top: 0px; padding-bottom: 20px; text-align: left;">
+            <span class="badge">Nomination Form</span>
+        </section>
+
+        <div class="step-indicator" id="stepIndicator">
+    <div class="step active"><span class="step-num">1</span>Policy</div>
+    <div class="step"><span class="step-num">2</span>Nominee</div>
+    <div class="step"><span class="step-num">3</span>Sign</div>
+    <div class="step"><span class="step-num">4</span>Generate</div>        
+  </div>  
+        
+   <!-- STEP 1: Policy -->
+    <div class="wizard-step active">     
+   <section class="section" id="sectionA">
+    <h3>Policy Details</h3>
 
     <div class="row">
     <label>Policy No.
@@ -113,22 +393,25 @@ input[readonly] {
       </section>
 
   </section>
+    </div>
 
-  <section class="section" id="sectionA">
-    <h2>Section B — Nominee Entries</h2>
+  <!-- STEP 2: Nominee -->
+<div class="wizard-step">      
     <div id="nomineesContainer" class="nominee-grid"></div>
     <div class="row">
       <button id="addNominee">+ Add Another Nominee</button>
       <small class="muted">Up to 5 Nominees</small>
     </div>
-  </section>
 
+</div>  
+
+<!-- STEP 3: Sign -->
+
+<div class="wizard-step">         
 <section class="section">
-  <h2>Section E — Signature Details</h2>
 
   <!-- SECTION: Signature Details (Date/Place) -->
-  <section class="section">
-    <h2>Signature Details</h2>
+    <h3>Signature Details</h3>
     <div class="row">
       <label style="flex:1">Signed at (State)
         <select id="Nom_Nominee_SignState" class="persist">
@@ -170,6 +453,10 @@ input[readonly] {
         </select>
       </label>
     </div>
+
+        <div class="row">
+  <button type="button" class="btn-set-today ghost" onclick="setSignedDateToday()">Today</button>
+</div>
   </section>
 
   <!-- SECTION: Owner/Policyowner Signature -->
@@ -217,7 +504,7 @@ input[readonly] {
     <label style="flex:1">Mobile
       <input id="Nom_Nominee_Witness_Mobile" type="text">
     </label>
-  </div>
+  </div>    
 
   <!-- Tap-to-sign previews (Witness) -->
   <div class="sig-preview" id="preview_witness" onclick="openSig('witness')">
@@ -250,13 +537,53 @@ input[readonly] {
     <button id="clearPreviewTrustee" class="secondary" type="button">Clear Signature</button>
   </div>
   </section>
+</div>  
 
-  <section class="section actions">
-    <button id="generate">Generate PDF</button>
-    <button id="resetAll" class="secondary">Reset All</button>
-  </section>
+<div class="wizard-step"><!-- Step 4: Generate -->
+<section class="section">
+  <h2>Generate PDF / Reset Form</h2>
+  <div class="action-center">
+    
+    <!-- Restored pdf-grid wrapper here -->
+    <div class="pdf-grid">
+      <div class="doc-row">
+        <div class="doc-info">
+          <b class="doc-title">Noimnation Form</b>
+          <span class="doc-sub">LF4054 (email to POS Benefit: myben@manulife.my )</span>
+        </div>
+        <div class="actions">
+          <button onclick="fillPDF('Nomination and Trustees_LF4056_LF4054_fillable.pdf', 'view')" class="btn-secondary">View</button>
+          <button onclick="fillPDF('Nomination and Trustees_LF4056_LF4054_fillable.pdf', 'download')" class="btn-primary">Download</button>
+        </div>
+      </div>
+    </div> <!-- Close pdf-grid -->
 
+    <div class="reset-container">
+      <button onclick="resetAllData()" class="btn-reset">Reset All Fields & Signatures</button>
+    </div>
+
+  </div> <!-- Close action-center -->
+</section>
+</div><!-- (END) STEP 7: Generate -->
+
+   <!-- NAVIGATION BUTTONS -->
+    <div class="wizard-actions">
+      <button type="button" id="prevBtn" class="ghost" onclick="changeStep(-1)" style="visibility:hidden;">Previous</button>
+      <button type="button" id="nextBtn" onclick="changeStep(1)">Next Step</button>
+    </div>          
+
+          <section class="security">
+            <div class="security-box">
+                <strong>Secured Session Active:</strong> This platform operates on a static, local-injection framework. We do not store, log, or track any personal details or financial credentials on external servers.
+            </div>
+        </section>
+
+        
 </main>
+    
+  <footer class="footer">
+        &copy; 2026 CI Pro Universe Portal. All rights reserved. Built for CI Pro operations.
+    </footer>    
 
 <!-- Signature Modal -->
 <div id="sigModal" class="sig-modal" aria-hidden="true">
@@ -275,6 +602,7 @@ input[readonly] {
 <div id="saveStatus">Saved</div>
 
 <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+
 <script>
 /* ---------- CONFIG ---------- */
 const PDF_FILENAME = "Nomination and Trustees_LF4056_LF4054_fillable.pdf";
@@ -549,6 +877,63 @@ document.getElementById('same_as_insured').addEventListener('change', function()
     poName.dispatchEvent(new Event('input', { bubbles: true }));
 });
 
+/* ---------- Date Set Today Button ---------- */  
+function setSignedDateToday() {
+  const now = new Date();
+
+  // 1. Format Day (e.g., 5 -> "05")
+  const dayStr = String(now.getDate()).padStart(2, '0');
+
+  // 2. Format Month string matching select options
+  const monthNames = [
+    "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+    "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
+  ];
+  const monthStr = monthNames[now.getMonth()];
+
+  // 3. Format Year (e.g., "2026")
+  const yearStr = String(now.getFullYear());
+
+  // 4. Target elements
+  const daySelect = document.getElementById('Nom_Nominee_SignDay');
+  const monthSelect = document.getElementById('Nom_Nominee_SignMonth');
+  const yearSelect = document.getElementById('Nom_Nominee_SignYear');
+
+  if (daySelect && monthSelect && yearSelect) {
+    // Set values
+    daySelect.value = dayStr;
+    monthSelect.value = monthStr;
+    yearSelect.value = yearStr;
+
+    // Dispatch change event to trigger local storage auto-save listeners if present
+    daySelect.dispatchEvent(new Event('change', { bubbles: true }));
+    monthSelect.dispatchEvent(new Event('change', { bubbles: true }));
+    yearSelect.dispatchEvent(new Event('change', { bubbles: true }));
+
+    // Explicitly write to localStorage if you store form fields by ID directly
+    saveToLocalStorage('Nom_Nominee_SignDay', dayStr);
+    saveToLocalStorage('Nom_Nominee_SignMonth', monthStr);
+    saveToLocalStorage('Nom_Nominee_SignYear', yearStr);
+  }
+}
+
+// Helper function for local storage persistence
+function saveToLocalStorage(id, value) {
+  try {
+    // If you use a single object key for form data, adapt this accordingly
+    localStorage.setItem(id, value);
+    
+    // Optional: trigger your save indicator toast if you have one
+    const saveStatus = document.getElementById('saveStatus');
+    if (saveStatus) {
+      saveStatus.style.opacity = '1';
+      setTimeout(() => { saveStatus.style.opacity = '0'; }, 1500);
+    }
+  } catch (e) {
+    console.error('Failed to save to localStorage:', e);
+  }
+}
+
 /* ---------- SIGNATURE MODAL LOGIC (Owner + Payor) with HiDPI scaling ---------- */
 let sigTarget = null;
 const sigModal = $("sigModal");
@@ -688,16 +1073,35 @@ window.addEventListener("DOMContentLoaded", ()=>{
   });
 });
 
-/* ---------- Generate PDF ---------- */
-async function fillPDF(){
-  try {
-    $("generate").disabled = true;
 
-    const res = await fetch(PDF_FILENAME);
-    if (!res.ok) throw new Error("Cannot load PDF: " + PDF_FILENAME);
-    const bytes = await res.arrayBuffer();
-    const pdfDoc = await PDFLib.PDFDocument.load(bytes);
-    const form = pdfDoc.getForm();
+/* ---------- Generate PDF ---------- */
+async function fillPDF(templateFileName, action = 'download') {
+  // Grab action buttons to disable them during generation
+  const actionButtons = document.querySelectorAll('.actions button');
+  actionButtons.forEach(btn => btn.disabled = true);
+
+  // Helper function to safely fetch input DOM values without crashing on missing elements
+  const getValue = (id) => {
+    const el = document.getElementById(id);
+    return el ? el.value : "";
+  };
+
+  const getChecked = (id) => {
+    const el = document.getElementById(id);
+    return el ? el.checked : false;
+  };
+
+  try {
+    // 1. Fetch template PDF
+    const response = await fetch(templateFileName);
+    if (!response.ok) {
+      throw new Error(`Failed to load template file: ${templateFileName}`);
+    }
+    const existingPdfBytes = await response.arrayBuffer();
+
+    // 2. Load PDF document & get interactive form
+    const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+    const form = pdfDoc.getForm(); // <-- FIXED: Form initialization added
 
    // Section A - Policy Details FillPDF
   safeSetText(form, "Nom_PolicyNumber", $("Nom_PolicyNumber").value);
@@ -896,47 +1300,51 @@ if (sigTrustee) {
     // Flatten form fields before saving
     //form.flatten();
     
-        // Save & download FillPDF
     const pdfBytes = await pdfDoc.save();
+    const blob = new Blob([pdfBytes], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
 
-    // 1. Get Policy Number and handle naming
-    const policyInput = document.getElementById('Nom_PolicyNumber');
+    // 4. Construct output filename with policy number fallback
+    const policyVal = getValue("Nom_PolicyNumber");
     let policyNum = "NEW";
-    
-    if (policyInput && policyInput.value.trim() !== "") {
-        // Remove special characters that aren't allowed in filenames
-        policyNum = policyInput.value.trim().replace(/[^a-z0-9]/gi, '_');
+
+    if (policyVal.trim() !== "") {
+      policyNum = policyVal.trim().replace(/[^a-z0-9]/gi, '_');
+    } else {
+      const savedPolicy = localStorage.getItem("Nom_PolicyNumber");
+      if (savedPolicy && savedPolicy.trim() !== "") {
+        policyNum = savedPolicy.trim().replace(/[^a-z0-9]/gi, '_');
+      }
     }
 
     const finalFileName = `${policyNum}_Nomination.pdf`;
 
-    // 2. Trigger Download
-    const blob = new Blob([pdfBytes], { type: "application/pdf" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a"); 
-    
-    a.href = url; 
-    a.download = finalFileName; // Dynamic name applied here
-    
-    document.body.appendChild(a); 
-    a.click(); 
-    a.remove();
-    
-    setTimeout(()=> URL.revokeObjectURL(url), 2500);
+    // 5. Execute action (View in new tab OR Force Download)
+    if (action === 'view') {
+      window.open(url, '_blank');
+    } else {
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = finalFileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
 
-  } catch(err){
+    // 6. Clean up Blob URL memory leak after 5 seconds
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+
+  } catch (err) {
+    console.error("Critical PDF Error:", err);
     alert("PDF generation failed: " + (err.message || err));
-    console.error(err);
   } finally {
-    // This assumes your $ helper is defined: const $ = id => document.getElementById(id);
-    $("generate").disabled = false;
+    // Re-enable action buttons
+    actionButtons.forEach(btn => btn.disabled = false);
   }
 }
 
-
-
 /* ---------- RESET ALL DATA function ---------- */
-function resetAll() {
+function resetAllData() {
   if (!confirm("Are you sure you want to reset the form? All saved data will be cleared.")) {
     return;
   }
@@ -972,10 +1380,88 @@ function resetAll() {
   showSaveStatus();
 }
 
+//WIZARD TRACKER LOGIC
+const steps = document.querySelectorAll(".wizard-step");
+const indicatorSteps = document.querySelectorAll(".step");
+const nextBtn = document.getElementById("nextBtn");
+const prevBtn = document.getElementById("prevBtn");
+let currentStep = 0;
+
+// 1. Initialize Click Events for the Progress Tracker
+indicatorSteps.forEach((stepCircle, index) => {
+  stepCircle.addEventListener("click", () => {
+    navigateTo(index);
+  });
+});
+
+// 2. Updated Navigation Function (Hides Next button on last step)
+function navigateTo(index) {
+  // Hide current
+  steps[currentStep].classList.remove("active");
+  indicatorSteps[currentStep].classList.remove("active");
+
+  // Update Index
+  currentStep = index;
+
+  // Show new
+  steps[currentStep].classList.add("active");
+  indicatorSteps[currentStep].classList.add("active");
+
+  // Handle "Previous" button visibility
+  prevBtn.style.visibility = (currentStep === 0) ? "hidden" : "visible";
+
+  // Handle "Next" button: Hide it completely on the final step
+  if (currentStep === steps.length - 1) {
+    nextBtn.style.display = "none";
+  } else {
+    nextBtn.style.display = "block";
+    nextBtn.innerText = "Next Step";
+  }
+
+  // Smooth scroll to top of the card
+  document.querySelector('main').scrollIntoView({ behavior: 'smooth' });
+}
+
+// 3. Updated Next/Back logic
+function changeStep(n) {
+  let newStep = currentStep + n;
+  
+  // Only navigate if the step actually exists
+  if (newStep >= 0 && newStep < steps.length) {
+    navigateTo(newStep);
+  }
+}    
 
 /* ---------- Wire buttons ---------- */
 $("generate").addEventListener("click", fillPDF);
 $("resetAll").addEventListener("click", resetAll);
+
+// iOS-Style Back Navigation Interceptor
+const backToMainLink = document.getElementById("backToMainLink");
+if (backToMainLink) {
+    backToMainLink.addEventListener("click", function(e) {
+        e.preventDefault(); // Always intercept to control the navigation flow cleanly
+        
+        // If the browser has history of a previous page within your system, pop back to it natively
+        if (document.referrer && document.referrer.includes(window.location.hostname)) {
+            window.history.back();
+        } else {
+            // Secure Fallback: If they opened the form directly in a new tab
+            window.location.href = "dashboard.html";
+        }
+    });
+}
+
+    
 </script>
+     <!-- Interactive Script for Mobile Navigation Layout Toggle -->
+    <script>
+        function toggleMobileMenu() {
+            document.getElementById('navMenu').classList.toggle('show');
+        }
+    </script>      
+
+
+    
 </body>
 </html>
