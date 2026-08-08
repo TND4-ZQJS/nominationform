@@ -4,196 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CI Pro Universe | Magic Filler</title>
+    <link rel="stylesheet" href="css-fillerpages.css">
+    <link rel="stylesheet" href="css-subpages.css">  
+    
 <style>
-/* ============================================================
-   GLOBAL DESIGN VARIABLES (Unified Workspace Framework)
-   ============================================================ */
-*, *::before, *::after { 
-    box-sizing: border-box; 
-    margin: 0; 
-    padding: 0; 
-}
-
-:root {
-    --nav-height: 52px;
-    --accent: #0071e3;
-    --bg: #f5f5f7;       /* Clean gray workspace canvas background */
-    --surface: #ffffff;  /* Card surface background */
-    --text-primary: #1d1d1f;
-    --text-secondary: #515154;
-    --text-tertiary: #86868b;
-    --border: rgba(0, 0, 0, 0.06);
-    --line: #e9e9ee;
-}
-
-body {
-    background-color: var(--bg);
-    color: var(--text-primary);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
-    -webkit-font-smoothing: antialiased;
-    line-height: 1.5;
-}
-
-.container {
-    max-width: 940px;
-    margin: 40px auto;
-    padding: 0 24px 20px;
-}
-
-/* ============================================================
-   STICKY STYLISH NAVBAR STRUCTURE
-   ============================================================ */
-.navbar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    height: var(--nav-height);
-}
-
-.nav-container {
-    max-width: 940px;
-    margin: 0 auto;
-    padding: 0 24px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    gap: 32px;
-}
-
-.logo {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text-primary);
-    cursor: pointer;
-    letter-spacing: -0.02em;
-    flex-shrink: 0;
-}
-
-.nav-menu {
-    display: flex;
-    gap: 4px;
-    align-items: center;
-    margin-left: auto;
-}
-
-.nav-item {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    text-decoration: none;
-    padding: 6px 12px;
-    border-radius: 8px;
-    transition: background 0.15s, color 0.15s;
-    white-space: nowrap;
-}
-
-.nav-item:hover { 
-    background: rgba(0,0,0,0.05); 
-    color: var(--text-primary); 
-}
-
-.nav-item.active { 
-    background: rgba(0,113,227,0.08); 
-    color: var(--accent); 
-}
-
-.menu-toggle {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    cursor: pointer;
-    margin-left: auto;
-    padding: 6px;
-}
-
-.menu-toggle span {
-    display: block;
-    width: 22px;
-    height: 2px;
-    background: var(--text-primary);
-    border-radius: 2px;
-    transition: 0.3s;
-}
-
-@media (max-width: 700px) {
-    .menu-toggle { display: flex; }
-    .nav-menu {
-        display: none;
-        position: absolute;
-        top: var(--nav-height);
-        left: 0; right: 0;
-        background: rgba(255,255,255,0.97);
-        backdrop-filter: blur(20px);
-        flex-direction: column;
-        padding: 12px 16px 20px;
-        gap: 2px;
-        border-bottom: 1px solid var(--border);
-    }
-    .nav-menu.show { display: flex; }
-    .nav-item { width: 100%; padding: 10px 14px; }
-}
-
-/* Security Box */
-.security {
-    margin-bottom: 24px;
-}
-
-.security-box {
-    background-color: transparent;
-    border-left: 3px solid #86868b;
-    padding: 16px 24px;
-    font-size: 14px;
-    color: #6e6e73;
-}    
-
-/* Footer */
-.footer {
-    padding: 20px 24px 40px 24px;
-    text-align: center;
-    font-size: 12px;
-    color: #86868b;
-    border-top: 1px solid #e8e8ed;
-}    
-
-/* Hero Section */
-.hero {
-    padding-top: 140px;
-    padding-bottom: 80px;
-    text-align: center;
-}
-
-.badge {
-    font-size: 20px;
-    font-weight: 600;
-    color: #bf4800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    display: block;
-    margin-bottom: 12px;
-}
-
-.hero h1 {
-    font-size: 48px;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-    margin-bottom: 16px;
-    color: #1d1d1f;
-}
-
-.subtitle {
-    font-size: 19px;
-    color: #86868b;
-    max-width: 640px;
-    margin: 0 auto;
-    font-weight: 400;
-    letter-spacing: -0.01em;
-}    
-
 /* ============================================================
    FILLER WORKSPACE COMPONENT STYLES
    ============================================================ */
@@ -246,20 +60,6 @@ button.ghost:hover { background: rgba(0,0,0,0.02); }
   .actions button {flex: 1;text-align: center;}
 }    
 
-  /* Wizard Steps Interface Tracker */
-.step-indicator { display: flex; justify-content: space-between; margin-bottom: 30px; background: #fff; padding: 15px; border-radius: 12px; border: 1px solid var(--line); overflow-x: auto; gap: 10px; }
-.step { flex: 1; text-align: center; font-size: 0.8rem; color: #888; cursor: pointer; transition: all 0.2s ease-in-out; padding: 8px; border-radius: 8px; min-width: 90px; display: flex; flex-direction: column; align-items: center; }
-.step:hover { background: #f0f7ff; color: var(--accent); }
-.step.active { color: var(--accent); font-weight: 600; background: #f0f7ff; }
-.step-num { width: 28px; height: 28px; line-height: 28px; border-radius: 50%; background: #eee; display: block; margin-bottom: 6px; font-size: 0.85rem; transition: background 0.3s; color: #333; }
-.step.active .step-num { background: var(--accent); color: #fff; }
-
-.wizard-step { display: none; background: var(--surface); padding: 12px; border-radius: 18px; border: 1px solid rgba(0,0,0,0.02); box-shadow: 0 4px 12px rgba(0,0,0,0.01); }
-.wizard-step.active { display: block; animation: slideIn 0.3s ease-out; }
-
-@keyframes slideIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
-.wizard-actions { display: flex; justify-content: space-between; margin-top: 30px; padding: 20px 0; border-top: 1px solid var(--line); }  
-
   /* Signature preview tiles */
   .sig-preview{
     width:100%; height:150px; border:1px dashed #bbb; border-radius:10px;
@@ -278,19 +78,6 @@ button.ghost:hover { background: rgba(0,0,0,0.02); }
   /* NOTE: canvas is responsive via CSS; internal pixels are set in JS for crispness */
   #sigCanvas{ width:100%; height:220px; background:#fff; border:1px solid #ddd; border-radius:10px; touch-action:none }
   .sig-actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:10px; }
-
-/* ============================================================
-    PREMIUM iOS BACK NAVIGATION ENGINE (Optimized)
-   ============================================================ */
-.back-navigation-container {max-width: 940px;margin: 20px auto 0 auto;padding: 0 24px;display: flex;align-items: center;}
-a.back-link,
-a.back-link span {text-decoration: none !important;text-decoration-line: none !important;border-bottom: none !important;box-shadow: none !important;outline: none !important;}
-a.back-link {display: inline-flex;align-items: center;gap: 2px;color:#007aff; 
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-            font-size: 16px;font-weight: 400;letter-spacing: -0.3px;transition: opacity 0.15s ease;cursor: pointer;-webkit-user-select: none;user-select: none;}
-a.back-link:hover {opacity: 0.7;}
-a.back-link:active {opacity: 0.3;}
-a.back-link svg {margin-left: -6px;transform: translateY(0.5px);stroke: #007aff !important;fill: none; /* Ensures vector shapes don't accidentally bloat */}
 
    .btn-set-today {
   margin-left: 8px;
