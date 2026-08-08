@@ -528,7 +528,7 @@ a.back-link svg {margin-left: -6px;transform: translateY(0.5px);stroke: #007aff 
 
    <div class="row">
   <label style="flex:1">Name: 
-    <span id="Complx_Sign_PO_Name_Display" style="font-weight: 600;">-</span>
+    <span id="Nom_Sign_PO_Name_Display" style="font-weight: 600;">-</span>
   </label>
 </div>     
 
@@ -547,7 +547,7 @@ a.back-link svg {margin-left: -6px;transform: translateY(0.5px);stroke: #007aff 
 
     <div class="row">
   <label style="flex:1">Name: 
-    <span id="Complx_Sign_Witness_Name_Display" style="font-weight: 600;">-</span>
+    <span id="Nom_Sign_Witness_Name_Display" style="font-weight: 600;">-</span>
   </label>
 </div>      
   
@@ -567,7 +567,7 @@ a.back-link svg {margin-left: -6px;transform: translateY(0.5px);stroke: #007aff 
 
   <div class="row">
   <label style="flex:1">Name: 
-    <span id="Complx_Sign_Trustee_Name_Display" style="font-weight: 600;">-</span>
+    <span id="Nom_Sign_Trustee_Name_Display" style="font-weight: 600;">-</span>
   </label>
 </div>    
 
@@ -922,9 +922,9 @@ document.getElementById('same_as_insured').addEventListener('change', function()
 /* ---------- Signature Names Display ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   const fieldMap = {
-    "Complx_Sign_PO_Name": "Complx_Sign_PO_Name_Display",
-    "Complx_Sign_Witness_Name": "Complx_Sign_Witness_Name_Display",
-    "Complx_Sign_Trustee_Name": "Complx_Sign_Trustee_Name_Display",
+    "Nom_Sign_PO_Name": "Nom_Sign_PO_Name_Display",
+    "Nom_Sign_Witness_Name": "Nom_Sign_Witness_Name_Display",
+    "Nom_Sign_Trustee_Name": "Nom_Sign_Trustee_Name_Display",
   };
 
   function updateDisplay(storageKey, displayId, directValue = null) {
