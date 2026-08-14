@@ -540,19 +540,22 @@ function createNomineeEntry(index){
         </label>
     </div>
   </div>
-
+    <div class="row" style="flex:1">
     <label>NRIC/Passport No.
       <input type="text" id="Nom_Nominee${index}_NRICPassport">
     </label>
     <label>Email
       <input type="text" id="Nom_Nominee${index}_Email">
     </label>
+    </div>
+    <div class="row" style="flex:1">
     <label>Mobile No.
       <input type="text" id="Nom_Nominee${index}_Mobile">
     </label>
     <label>Nationality
       <input type="text" id="Nom_Nominee${index}_Nationality">
     </label>
+    </div>
     <label>Relationship to Proposed Life Insured/Insured
       <select id="Nom_Nominee${index}_Relationship"><option value="">-- CHOOSE --</option>${relationshipOptionsHTML()}</select>
     </label>
